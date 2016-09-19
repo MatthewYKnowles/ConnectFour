@@ -41,7 +41,7 @@ export class GameboardComponent implements OnInit {
     this.trackPieceInGrid(column, row);
     this.drawPiece(column, row);
     this.changeTurn();
-    this.checkForWinner(row);
+    this.checkForWinner(row, column);
     console.log(this.grid);
   }
 
@@ -67,19 +67,30 @@ export class GameboardComponent implements OnInit {
     this.playersTurn = "red";
   }
 
-  private checkForWinner(row: number) {
-      this.checkRowsForWinner(row);
+  private checkForWinner(row: number, column: number) {
+    this.checkRowsForWinner(row);
+    this.checkColumnForWinner(column);
   }
 
-    private checkRowsForWinner(row: number) {
-        let bottomRow = this.grid[row].join("");
-        if (bottomRow.includes("rrrr")) {
-            this.declareWinner("red");
-        }
-        if (bottomRow.includes("bbbb")) {
-            this.declareWinner("black");
-        }
+  checkColumnForWinner(column: number) {
+    let columnCollection = "";
+    for (let row: number = 6; row > 0; row--){
+      columnCollection += this.grid[row][column - 1]
     }
+    if (columnCollection.includes("rrrr")){
+      this.declareWinner("red");
+    }
+  }
+
+  private checkRowsForWinner(row: number) {
+      let bottomRow = this.grid[row].join("");
+      if (bottomRow.includes("rrrr")) {
+          this.declareWinner("red");
+      }
+      if (bottomRow.includes("bbbb")) {
+          this.declareWinner("black");
+      }
+  }
 
   gameIsOver(): boolean {
     return this.winningPlayer.length > 0;
