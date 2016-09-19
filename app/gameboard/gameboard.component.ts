@@ -7,11 +7,13 @@ import {Component, ViewChild, AfterViewInit} from '@angular/core';
 })
 export class GameboardComponent implements AfterViewInit {
 
+  state: any;
   context: CanvasRenderingContext2D;
   playersTurn: string = "white";
   grid: any = {1: [".",".",".",".",".",".","."], 2: [".",".",".",".",".",".","."], 3: [".",".",".",".",".",".","."], 4: [".",".",".",".",".",".","."], 5: [".",".",".",".",".",".","."], 6: [".",".",".",".",".",".","."]};
 
   @ViewChild("myCanvas") myCanvas: any;
+  private winningPlayer: string;
 
   ngAfterViewInit(): void {
     this.context = this.myCanvas.nativeElement.getContext("2d");
@@ -40,6 +42,7 @@ export class GameboardComponent implements AfterViewInit {
     this.trackPieceInGrid(column, row);
     this.drawPiece(column, row);
     this.changeTurn();
+    this.checkForWinner();
     console.log(this.grid);
   }
 
@@ -47,7 +50,7 @@ export class GameboardComponent implements AfterViewInit {
     return this.grid[row][column - 1] !== ".";
   }
 
-  changeTurn(): void {
+  private changeTurn(): void {
     this.playersTurn = this.playersTurn === "red" ? "black": "red";
   }
 
@@ -55,11 +58,19 @@ export class GameboardComponent implements AfterViewInit {
     this.grid[row][column - 1] = this.playersTurn[0];
   }
 
-  drawBoard(): void {
+  private drawBoard(): void {
     for (let row: number = 6; row >= 0; row--){
         for (let column: number = 7; column > 0; column--){
             this.drawPiece(column, row)
         }
     }
+  }
+
+  private checkForWinner() {
+    this.state = "winning state"
+  }
+
+  private declareWinner() {
+    this.winningPlayer = "";
   }
 }

@@ -1,24 +1,40 @@
 import {GameboardComponent} from "./gameboard.component";
+
 describe("gameboard", ()=> {
   it("should drop a piece in column 1 and have it go to the bottom", ()=> {
-    let gameBoard: GameboardComponent = new GameboardComponent();
-    spyOn(gameBoard, 'drawPiece');
-    gameBoard.dropInColumn(1);
-    expect(gameBoard.drawPiece).toHaveBeenCalledWith(1, 6);
+    let gameboard: GameboardComponent = new GameboardComponent();
+    spyOn(gameboard, 'drawPiece');
+    gameboard.dropInColumn(1);
+    expect(gameboard.drawPiece).toHaveBeenCalledWith(1, 6);
   });
   it("should drop a second piece in column 1 and draw it in row 5", ()=> {
-    let gameBoard: GameboardComponent = new GameboardComponent();
-    spyOn(gameBoard, 'drawPiece');
-    gameBoard.dropInColumn(1);
-    gameBoard.dropInColumn(1);
-    expect(gameBoard.drawPiece).toHaveBeenCalledWith(1, 5);
+    let gameboard: GameboardComponent = new GameboardComponent();
+    spyOn(gameboard, 'drawPiece');
+    gameboard.dropInColumn(1);
+    gameboard.dropInColumn(1);
+    expect(gameboard.drawPiece).toHaveBeenCalledWith(1, 5);
   });
   it("should drop a third piece in column 1 and draw it in row 4", ()=> {
-    let gameBoard: GameboardComponent = new GameboardComponent();
-    spyOn(gameBoard, 'drawPiece');
-    gameBoard.dropInColumn(1);
-    gameBoard.dropInColumn(1);
-    gameBoard.dropInColumn(1);
-    expect(gameBoard.drawPiece).toHaveBeenCalledWith(1, 4);
+    let gameboard: GameboardComponent = new GameboardComponent();
+    spyOn(gameboard, 'drawPiece');
+    gameboard.dropInColumn(1);
+    gameboard.dropInColumn(1);
+    gameboard.dropInColumn(1);
+    expect(gameboard.drawPiece).toHaveBeenCalledWith(1, 4);
+  });
+});
+describe("winning conditions", ()=> {
+  it("should declare red the winner", ()=> {
+    let gameboard: GameboardComponent = new GameboardComponent();
+    spyOn(gameboard, 'drawPiece');
+    spyOn(gameboard, 'declareWinner');
+    gameboard.dropInColumn(1);
+    gameboard.dropInColumn(1);
+    gameboard.dropInColumn(2);
+    gameboard.dropInColumn(2);
+    gameboard.dropInColumn(3);
+    gameboard.dropInColumn(3);
+    gameboard.dropInColumn(4);
+    expect(gameboard.drawPiece).toHaveBeenCalledWith(1, 6);
   });
 });
