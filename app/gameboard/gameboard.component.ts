@@ -13,7 +13,7 @@ export class GameboardComponent implements OnInit {
   grid: any = {1: [".",".",".",".",".",".","."], 2: [".",".",".",".",".",".","."], 3: [".",".",".",".",".",".","."], 4: [".",".",".",".",".",".","."], 5: [".",".",".",".",".",".","."], 6: [".",".",".",".",".",".","."]};
 
   @ViewChild("myCanvas") myCanvas: any;
-  private winningPlayer: string;
+  private winningPlayer: string ="";
 
   ngOnInit(): void {
     this.context = this.myCanvas.nativeElement.getContext("2d");
@@ -80,6 +80,10 @@ export class GameboardComponent implements OnInit {
             this.declareWinner("black");
         }
     }
+
+  gameIsOver(): boolean {
+    return this.winningPlayer.length > 0;
+  }
 
   declareWinner(playerColor: string) {
     this.winningPlayer = playerColor;

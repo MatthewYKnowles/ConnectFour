@@ -1,7 +1,9 @@
 <h2>Connect Four</h2>
+<h2 *ngIf="gameIsOver()">{{winningPlayer}} wins!</h2>
 <br />
+
 <canvas #myCanvas width="700" height="600"></canvas>
-<div id="buttons">
+<div *ngIf="!gameIsOver()" id="buttons">
   <button (click)="dropInColumn(1)">Add Piece</button>
   <button (click)="dropInColumn(2)">Add Piece</button>
   <button (click)="dropInColumn(3)">Add Piece</button>
