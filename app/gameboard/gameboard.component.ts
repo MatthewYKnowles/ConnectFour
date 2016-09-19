@@ -15,7 +15,7 @@ export class GameboardComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     console.log(this.myCanvas);
     this.context = this.myCanvas.nativeElement.getContext("2d");
-    this.drawPiece(1, 7);
+    this.dropInColumn(1);
     this.drawPiece(2, 7);
     this.drawPiece(1, 6);
     this.drawPiece(1, 5);
@@ -38,6 +38,11 @@ export class GameboardComponent implements AfterViewInit {
     ctx.fillStyle = this.playersTurn;
     ctx.fill();
     this.changeTurn();
+  }
+
+  dropInColumn(column: number) {
+    let row = 7;
+    this.drawPiece(column, row);
   }
   changeTurn(): void {
     this.playersTurn = this.playersTurn === "red" ? "black": "red";
