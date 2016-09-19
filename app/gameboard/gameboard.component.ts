@@ -85,6 +85,12 @@ export class GameboardComponent implements OnInit {
     return this.winningPlayer.length > 0;
   }
 
+  startNewGame() {
+    this.drawBoard();
+    this.grid = {1: [".",".",".",".",".",".","."], 2: [".",".",".",".",".",".","."], 3: [".",".",".",".",".",".","."], 4: [".",".",".",".",".",".","."], 5: [".",".",".",".",".",".","."], 6: [".",".",".",".",".",".","."]};
+    this.winningPlayer = "";
+  }
+
   declareWinner(playerColor: string) {
     this.winningPlayer = playerColor;
   }

@@ -1,7 +1,6 @@
 <h2>Connect Four</h2>
-<h2 *ngIf="gameIsOver()">{{winningPlayer}} wins!</h2>
+<h1 *ngIf="gameIsOver()"> {{winningPlayer}} wins!!</h1>
 <br />
-
 <canvas #myCanvas width="700" height="600"></canvas>
 <div *ngIf="!gameIsOver()" id="buttons">
   <button (click)="dropInColumn(1)">Add Piece</button>
@@ -11,4 +10,7 @@
   <button (click)="dropInColumn(5)">Add Piece</button>
   <button (click)="dropInColumn(6)">Add Piece</button>
   <button (click)="dropInColumn(7)">Add Piece</button>
+</div>
+<div id="newGame">
+  <button *ngIf="gameIsOver()" (click)="startNewGame()">Play Again?</button>
 </div>
