@@ -24,7 +24,7 @@ describe("gameboard", ()=> {
   });
 });
 describe("winning conditions", ()=> {
-  it("should declare red the winner", ()=> {
+  it("should declare red the winner with a bottom row connect 4", ()=> {
     let gameboard: GameboardComponent = new GameboardComponent();
     spyOn(gameboard, 'drawPiece');
     spyOn(gameboard, 'declareWinner');
@@ -36,5 +36,19 @@ describe("winning conditions", ()=> {
     gameboard.dropInColumn(3);
     gameboard.dropInColumn(4);
     expect(gameboard.declareWinner).toHaveBeenCalledWith("red");
+  });
+  it("should declare black the winner with a bottom row connect 4", ()=> {
+    let gameboard: GameboardComponent = new GameboardComponent();
+    spyOn(gameboard, 'drawPiece');
+    spyOn(gameboard, 'declareWinner');
+    gameboard.dropInColumn(5);
+    gameboard.dropInColumn(1);
+    gameboard.dropInColumn(5);
+    gameboard.dropInColumn(2);
+    gameboard.dropInColumn(5);
+    gameboard.dropInColumn(3);
+    gameboard.dropInColumn(5);
+    gameboard.dropInColumn(4);
+    expect(gameboard.declareWinner).toHaveBeenCalledWith("black");
   });
 });

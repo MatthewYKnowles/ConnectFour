@@ -72,6 +72,9 @@ export class GameboardComponent implements OnInit {
     if(bottomRow.includes("rrrr")){
       this.declareWinner("red");
     }
+    if(bottomRow.includes("bbbb")){
+      this.declareWinner("black");
+    }
     console.log(bottomRow);
   }
 
