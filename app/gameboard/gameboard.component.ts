@@ -8,13 +8,15 @@ import {Component, ViewChild, AfterViewInit} from '@angular/core';
 export class GameboardComponent implements AfterViewInit {
 
   context: CanvasRenderingContext2D;
-  playersTurn: string = "red";
+  playersTurn: string = "white";
   grid: any = {1: [".",".",".",".",".",".","."], 2: [".",".",".",".",".",".","."], 3: [".",".",".",".",".",".","."], 4: [".",".",".",".",".",".","."], 5: [".",".",".",".",".",".","."], 6: [".",".",".",".",".",".","."]};
 
   @ViewChild("myCanvas") myCanvas: any;
 
   ngAfterViewInit(): void {
     this.context = this.myCanvas.nativeElement.getContext("2d");
+    this.drawBoard();
+    this.playersTurn = "red";
   }
 
   drawPiece(column: number, row: number) {
@@ -44,11 +46,20 @@ export class GameboardComponent implements AfterViewInit {
   private pieceAlreadyInSlot(row: number, column: number) {
     return this.grid[row][column - 1] !== ".";
   }
+
   changeTurn(): void {
     this.playersTurn = this.playersTurn === "red" ? "black": "red";
   }
 
   private trackPieceInGrid(column: number, row: number) {
     this.grid[row][column - 1] = this.playersTurn[0];
+  }
+
+  drawBoard(): void {
+    for (let row: number = 6; row >= 0; row--){
+        for (let column: number = 7; column > 0; column--){
+            this.drawPiece(column, row)
+        }
+    }
   }
 }
