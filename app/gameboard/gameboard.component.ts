@@ -1,24 +1,23 @@
-import {Component, ViewChild, AfterViewInit} from '@angular/core';
+import {Component, ViewChild, OnInit} from '@angular/core';
 
 @Component({
   selector: 'gameboard',
   templateUrl: 'app/gameboard/gameboard.component.html',
   styleUrls: ['app/gameboard/gameboard.component.css']
 })
-export class GameboardComponent implements AfterViewInit {
+export class GameboardComponent implements OnInit {
 
   state: any;
   context: CanvasRenderingContext2D;
-  playersTurn: string = "white";
+  playersTurn: string = "red";
   grid: any = {1: [".",".",".",".",".",".","."], 2: [".",".",".",".",".",".","."], 3: [".",".",".",".",".",".","."], 4: [".",".",".",".",".",".","."], 5: [".",".",".",".",".",".","."], 6: [".",".",".",".",".",".","."]};
 
   @ViewChild("myCanvas") myCanvas: any;
   private winningPlayer: string;
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     this.context = this.myCanvas.nativeElement.getContext("2d");
     this.drawBoard();
-    this.playersTurn = "red";
   }
 
   drawPiece(column: number, row: number) {
@@ -59,18 +58,24 @@ export class GameboardComponent implements AfterViewInit {
   }
 
   private drawBoard(): void {
+    this.playersTurn = "white";
     for (let row: number = 6; row >= 0; row--){
         for (let column: number = 7; column > 0; column--){
             this.drawPiece(column, row)
         }
     }
+    this.playersTurn = "red";
   }
 
   private checkForWinner() {
-    this.state = "winning state"
+    let bottomRow = this.grid[6].join("");
+    if(bottomRow.includes("rrrr")){
+      this.declareWinner("red");
+    }
+    console.log(bottomRow);
   }
 
-  private declareWinner() {
-    this.winningPlayer = "";
+  declareWinner(playerColor: string) {
+    this.winningPlayer = playerColor;
   }
 }

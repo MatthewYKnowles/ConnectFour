@@ -35,6 +35,6 @@ describe("winning conditions", ()=> {
     gameboard.dropInColumn(3);
     gameboard.dropInColumn(3);
     gameboard.dropInColumn(4);
-    expect(gameboard.drawPiece).toHaveBeenCalledWith(1, 6);
+    expect(gameboard.declareWinner).toHaveBeenCalledWith("red");
   });
 });
