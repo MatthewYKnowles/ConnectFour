@@ -6,11 +6,19 @@ describe("gameboard", ()=> {
     gameBoard.dropInColumn(1);
     expect(gameBoard.drawPiece).toHaveBeenCalledWith(1, 6);
   });
-  it("should drop a second piece in column 1 and draw it in row 6", ()=> {
+  it("should drop a second piece in column 1 and draw it in row 5", ()=> {
     let gameBoard: GameboardComponent = new GameboardComponent();
     spyOn(gameBoard, 'drawPiece');
     gameBoard.dropInColumn(1);
     gameBoard.dropInColumn(1);
     expect(gameBoard.drawPiece).toHaveBeenCalledWith(1, 5);
+  });
+  it("should drop a third piece in column 1 and draw it in row 4", ()=> {
+    let gameBoard: GameboardComponent = new GameboardComponent();
+    spyOn(gameBoard, 'drawPiece');
+    gameBoard.dropInColumn(1);
+    gameBoard.dropInColumn(1);
+    gameBoard.dropInColumn(1);
+    expect(gameBoard.drawPiece).toHaveBeenCalledWith(1, 4);
   });
 });

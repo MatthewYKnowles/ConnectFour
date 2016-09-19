@@ -34,13 +34,17 @@ export class GameboardComponent implements AfterViewInit {
 
   dropInColumn(column: number) {
     let row = 6;
-    if (this.grid[row][column - 1] !== ".") {
-      row--;
+    while(this.pieceAlreadyInSlot(row, column)) {
+      row--
     }
     this.trackPieceInGrid(column, row);
     this.drawPiece(column, row);
     this.changeTurn();
     console.log(this.grid);
+  }
+
+  private pieceAlreadyInSlot(row: number, column: number) {
+    return this.grid[row][column - 1] !== ".";
   }
   changeTurn(): void {
     this.playersTurn = this.playersTurn === "red" ? "black": "red";
