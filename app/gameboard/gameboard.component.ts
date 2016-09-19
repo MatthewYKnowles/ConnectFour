@@ -41,7 +41,7 @@ export class GameboardComponent implements OnInit {
     this.trackPieceInGrid(column, row);
     this.drawPiece(column, row);
     this.changeTurn();
-    this.checkForWinner();
+    this.checkForWinner(row);
     console.log(this.grid);
   }
 
@@ -67,8 +67,8 @@ export class GameboardComponent implements OnInit {
     this.playersTurn = "red";
   }
 
-  private checkForWinner() {
-    let bottomRow = this.grid[6].join("");
+  private checkForWinner(row: number) {
+    let bottomRow = this.grid[row].join("");
     if(bottomRow.includes("rrrr")){
       this.declareWinner("red");
     }
