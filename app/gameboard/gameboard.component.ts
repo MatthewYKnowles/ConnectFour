@@ -2,7 +2,8 @@ import {Component, ViewChild, AfterViewInit} from '@angular/core';
 
 @Component({
   selector: 'gameboard',
-  templateUrl: 'app/gameboard/gameboard.component.html'
+  templateUrl: 'app/gameboard/gameboard.component.html',
+  styleUrls: ['app/gameboard/gameboard.component.css']
 })
 export class GameboardComponent implements AfterViewInit {
 
@@ -18,6 +19,11 @@ export class GameboardComponent implements AfterViewInit {
     this.drawPiece(2, 7);
     this.drawPiece(1, 6);
     this.drawPiece(1, 5);
+    this.drawPiece(2, 6);
+    this.drawPiece(3, 7);
+    this.drawPiece(3, 6);
+    this.drawPiece(4, 7);
+    this.drawPiece(4, 6);
   }
 
   drawPiece(column: number, row: number) {
