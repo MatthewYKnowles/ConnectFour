@@ -68,15 +68,18 @@ export class GameboardComponent implements OnInit {
   }
 
   private checkForWinner(row: number) {
-    let bottomRow = this.grid[row].join("");
-    if(bottomRow.includes("rrrr")){
-      this.declareWinner("red");
-    }
-    if(bottomRow.includes("bbbb")){
-      this.declareWinner("black");
-    }
-    console.log(bottomRow);
+      this.checkRowsForWinner(row);
   }
+
+    private checkRowsForWinner(row: number) {
+        let bottomRow = this.grid[row].join("");
+        if (bottomRow.includes("rrrr")) {
+            this.declareWinner("red");
+        }
+        if (bottomRow.includes("bbbb")) {
+            this.declareWinner("black");
+        }
+    }
 
   declareWinner(playerColor: string) {
     this.winningPlayer = playerColor;
