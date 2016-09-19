@@ -15,8 +15,6 @@ export class GameboardComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.context = this.myCanvas.nativeElement.getContext("2d");
-    this.dropInColumn(1);
-    this.dropInColumn(1);
   }
 
   drawPiece(column: number, row: number) {
