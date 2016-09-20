@@ -74,19 +74,28 @@ export class GameboardComponent implements OnInit {
   }
 
   checkUpRightDiagonalForWinner(row: number, column: number) {
-    this.calculateBottomDiagonalPoint(row, column);
-  }
-
-  calculateBottomDiagonalPoint(row: number, column: number) {
+    let currentDiagonalAsString = "";
     let currentRow = row;
     let currentColumn = column;
     while (currentRow < 6 && currentColumn > 1) {
       currentRow ++;
       currentColumn --;
     }
-    console.log(currentRow + " current row");
-    console.log(currentColumn + " current column");
+
+    while(currentRow > 0 && currentColumn < 7){
+      currentDiagonalAsString += this.grid[currentRow][currentColumn];
+      currentRow--;
+      currentColumn++;
+    }
+    console.log(currentDiagonalAsString);
+    if (currentDiagonalAsString.includes("rrrr")){
+      this.declareWinner("red");
+    }
+    if (currentDiagonalAsString.includes("bbbb")){
+      this.declareWinner("black");
+    }
   }
+
   checkColumnForWinner(column: number) {
     let columnCollection = "";
     for (let row: number = 6; row > 0; row--){
