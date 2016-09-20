@@ -80,4 +80,21 @@ describe("winning conditions", ()=> {
     gameboard.dropInColumn(2);
     expect(gameboard.declareWinner).toHaveBeenCalledWith("black");
   });
+  it("should declare red the winner with a connect four in a up right diagonal", ()=> {
+    let gameboard: GameboardComponent = new GameboardComponent();
+    spyOn(gameboard, 'drawPiece');
+    spyOn(gameboard, 'declareWinner');
+    gameboard.dropInColumn(1);
+    gameboard.dropInColumn(2);
+    gameboard.dropInColumn(2);
+    gameboard.dropInColumn(3);
+    gameboard.dropInColumn(4);
+    gameboard.dropInColumn(3);
+    gameboard.dropInColumn(3);
+    gameboard.dropInColumn(4);
+    gameboard.dropInColumn(5);
+    gameboard.dropInColumn(4);
+    gameboard.dropInColumn(4);
+    expect(gameboard.declareWinner).toHaveBeenCalledWith("red");
+  });
 });

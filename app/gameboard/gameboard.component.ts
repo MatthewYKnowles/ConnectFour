@@ -70,8 +70,23 @@ export class GameboardComponent implements OnInit {
   private checkForWinner(row: number, column: number) {
     this.checkRowsForWinner(row);
     this.checkColumnForWinner(column);
+    this.checkUpRightDiagonalForWinner(row, column);
   }
 
+  checkUpRightDiagonalForWinner(row: number, column: number) {
+    this.calculateBottomDiagonalPoint(row, column);
+  }
+
+  calculateBottomDiagonalPoint(row: number, column: number) {
+    let currentRow = row;
+    let currentColumn = column;
+    while (currentRow < 6 && currentColumn > 1) {
+      currentRow ++;
+      currentColumn --;
+    }
+    console.log(currentRow + " current row");
+    console.log(currentColumn + " current column");
+  }
   checkColumnForWinner(column: number) {
     let columnCollection = "";
     for (let row: number = 6; row > 0; row--){
