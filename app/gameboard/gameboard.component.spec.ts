@@ -66,4 +66,18 @@ describe("winning conditions", ()=> {
     gameboard.dropInColumn(1);
     expect(gameboard.declareWinner).toHaveBeenCalledWith("red");
   });
+  it("should declare black the winner with a connect four in column 1", ()=> {
+    let gameboard: GameboardComponent = new GameboardComponent();
+    spyOn(gameboard, 'drawPiece');
+    spyOn(gameboard, 'declareWinner');
+    gameboard.dropInColumn(1);
+    gameboard.dropInColumn(2);
+    gameboard.dropInColumn(1);
+    gameboard.dropInColumn(2);
+    gameboard.dropInColumn(1);
+    gameboard.dropInColumn(2);
+    gameboard.dropInColumn(3);
+    gameboard.dropInColumn(2);
+    expect(gameboard.declareWinner).toHaveBeenCalledWith("black");
+  });
 });

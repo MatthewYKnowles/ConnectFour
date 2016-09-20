@@ -80,6 +80,9 @@ export class GameboardComponent implements OnInit {
     if (columnCollection.includes("rrrr")){
       this.declareWinner("red");
     }
+    if (columnCollection.includes("bbbb")){
+      this.declareWinner("black");
+    }
   }
 
   private checkRowsForWinner(row: number) {
