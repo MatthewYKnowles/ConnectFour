@@ -42,7 +42,6 @@ export class GameboardComponent implements OnInit {
     this.drawPiece(column, row);
     this.changeTurn();
     this.checkForWinner(row, column);
-    console.log(this.grid);
   }
 
   private pieceAlreadyInSlot(row: number, column: number) {
@@ -68,9 +67,10 @@ export class GameboardComponent implements OnInit {
   }
 
   private checkForWinner(row: number, column: number) {
-    this.checkRowsForWinner(row);
+    this.checkRowsForWinner(this.grid[row].join(""));
     this.checkColumnForWinner(column);
     this.checkUpRightDiagonalForWinner(row, column);
+    this.checkDownRightDiagonalForWinner(row, column);
   }
 
   checkUpRightDiagonalForWinner(row: number, column: number) {
@@ -82,9 +82,32 @@ export class GameboardComponent implements OnInit {
       currentColumn --;
     }
 
-    while(currentRow > 0 && currentColumn < 7){
-      currentDiagonalAsString += this.grid[currentRow][currentColumn];
+    while(currentRow >= 1 && currentColumn <= 7){
+      currentDiagonalAsString += this.grid[currentRow][currentColumn - 1];
       currentRow--;
+      currentColumn++;
+    }
+    console.log(currentDiagonalAsString);
+    if (currentDiagonalAsString.includes("rrrr")){
+      this.declareWinner("red");
+    }
+    if (currentDiagonalAsString.includes("bbbb")){
+      this.declareWinner("black");
+    }
+  }
+
+  checkDownRightDiagonalForWinner(row: number, column: number) {
+    let currentDiagonalAsString = "";
+    let currentRow = row;
+    let currentColumn = column;
+    while (currentRow > 1 && currentColumn > 1) {
+      currentRow --;
+      currentColumn --;
+    }
+
+    while(currentRow <= 6 && currentColumn <= 7){
+      currentDiagonalAsString += this.grid[currentRow][currentColumn - 1];
+      currentRow++;
       currentColumn++;
     }
     console.log(currentDiagonalAsString);
@@ -109,12 +132,12 @@ export class GameboardComponent implements OnInit {
     }
   }
 
-  private checkRowsForWinner(row: number) {
-      let bottomRow = this.grid[row].join("");
-      if (bottomRow.includes("rrrr")) {
+  private checkRowsForWinner(row: string) {
+    let redTurn: PlayersTurn = new RedsTurn();
+      if (redTurn.checkRowForWinner(row)) {
           this.declareWinner("red");
       }
-      if (bottomRow.includes("bbbb")) {
+      if (row.includes("bbbb")) {
           this.declareWinner("black");
       }
   }
@@ -131,5 +154,23 @@ export class GameboardComponent implements OnInit {
 
   declareWinner(playerColor: string) {
     this.winningPlayer = playerColor;
+  }
+}
+
+abstract class PlayersTurn {
+  playerColor: string;
+  abstract checkRowForWinner(row: string): boolean;
+}
+
+class RedsTurn extends PlayersTurn {
+  playerColor: string = "red";
+  checkRowForWinner(row: string): boolean {
+    return row.includes("rrrr");
+  }
+}
+class BlacksTurn extends PlayersTurn {
+  playerColor: string = "red";
+  checkRowForWinner(row: string): boolean {
+    return row.includes("rrrr");
   }
 }
