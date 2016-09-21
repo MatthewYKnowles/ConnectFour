@@ -1,4 +1,4 @@
-import {GameboardComponent} from "./gameboard.component";
+import {GameboardComponent } from "./gameboard.component";
 
 describe("gameboard", ()=> {
   it("should drop a piece in column 1 and have it go to the bottom", ()=> {

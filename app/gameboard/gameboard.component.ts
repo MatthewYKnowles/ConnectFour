@@ -9,7 +9,7 @@ export class GameboardComponent implements OnInit {
   private redsTurnState: State;
   private blacksTurnState: State;
   private gameOverState: State;
-  private state: State;
+  state: State;
 
   context: CanvasRenderingContext2D;
   playersTurn: string = "red";
@@ -17,13 +17,16 @@ export class GameboardComponent implements OnInit {
   @ViewChild("myCanvas") myCanvas: any;
   private winningPlayer: string ="";
 
-  ngOnInit(): void {
-    this.context = this.myCanvas.nativeElement.getContext("2d");
-    this.drawBoard();
+  constructor() {
     this.redsTurnState = new RedsTurnState();
     this.blacksTurnState = new BlacksTurnState();
     this.gameOverState = new GameOverState();
     this.state = this.redsTurnState;
+  }
+
+  ngOnInit(): void {
+    this.context = this.myCanvas.nativeElement.getContext("2d");
+    this.drawBoard();
   }
 
   drawPiece(column: number, row: number) {
@@ -46,8 +49,8 @@ export class GameboardComponent implements OnInit {
     }
     this.trackPieceInGrid(column, row);
     this.drawPiece(column, row);
-    this.changeTurn();
     this.checkForWinner(row, column);
+    this.changeTurn();
   }
 
   private pieceAlreadyInSlot(row: number, column: number) {
@@ -94,7 +97,6 @@ export class GameboardComponent implements OnInit {
       currentRow--;
       currentColumn++;
     }
-    console.log(currentDiagonalAsString);
     if (currentDiagonalAsString.includes("rrrr")){
       this.declareWinner("red");
     }
@@ -117,7 +119,6 @@ export class GameboardComponent implements OnInit {
       currentRow++;
       currentColumn++;
     }
-    console.log(currentDiagonalAsString);
     if (currentDiagonalAsString.includes("rrrr")){
       this.declareWinner("red");
     }
@@ -140,13 +141,8 @@ export class GameboardComponent implements OnInit {
   }
 
   private checkRowsForWinner(row: string) {
-    let redsTurn: PlayersTurn = new RedsTurnState();
-    let blacksTurn: PlayersTurn = new BlacksTurnState();
-      if (redsTurn.checkRowForWinner(row)) {
-          this.declareWinner("red");
-      }
-      if (blacksTurn.checkRowForWinner(row)) {
-          this.declareWinner("black");
+      if (this.state.checkRowForWinner(row)) {
+          this.declareWinner(this.state.getPlayerColor());
       }
   }
 
@@ -158,6 +154,7 @@ export class GameboardComponent implements OnInit {
     this.drawBoard();
     this.grid = {1: [".",".",".",".",".",".","."], 2: [".",".",".",".",".",".","."], 3: [".",".",".",".",".",".","."], 4: [".",".",".",".",".",".","."], 5: [".",".",".",".",".",".","."], 6: [".",".",".",".",".",".","."]};
     this.winningPlayer = "";
+    this.state = this.redsTurnState;
   }
 
   declareWinner(playerColor: string) {
@@ -165,28 +162,39 @@ export class GameboardComponent implements OnInit {
   }
 }
 
-interface State {
+export interface State {
+  checkRowForWinner(row: string): any;
+  getPlayerColor(): string;
 
 }
 
 class GameOverState implements State {
+  getPlayerColor(): string {
+    return null;
+  }
+  checkRowForWinner(row: string): any {
+    return null;
+  }
 
 }
 
 abstract class PlayersTurn {
-  playerColor: string;
-  abstract checkRowForWinner(row: string): boolean;
+  protected playerColor: string;
+  protected winningString: string;
+  checkRowForWinner(row: string): boolean {
+    return row.includes(this.winningString);
+  }
+  getPlayerColor(): string {
+    return this.playerColor;
+  }
 }
 
-class RedsTurnState extends PlayersTurn implements State{
+export class RedsTurnState extends PlayersTurn implements State {
   playerColor: string = "red";
-  checkRowForWinner(row: string): boolean {
-    return row.includes("rrrr");
-  }
+  winningString: string = "rrrr";
+
 }
-class BlacksTurnState extends PlayersTurn implements State{
+export class BlacksTurnState extends PlayersTurn implements State {
   playerColor: string = "black";
-  checkRowForWinner(row: string): boolean {
-    return row.includes("bbbb");
-  }
+  winningString: string = "bbbb";
 }
