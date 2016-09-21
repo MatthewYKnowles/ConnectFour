@@ -77,7 +77,7 @@ export class GameboardComponent implements OnInit {
   }
 
   private checkForWinner(row: number, column: number) {
-    this.checkRowsForWinner(this.grid[row].join(""));
+    this.checkRowForWinner(this.grid[row].join(""));
     this.checkColumnForWinner(column);
     this.checkUpRightDiagonalForWinner(row, column);
     this.checkDownRightDiagonalForWinner(row, column);
@@ -97,11 +97,8 @@ export class GameboardComponent implements OnInit {
       currentRow--;
       currentColumn++;
     }
-    if (currentDiagonalAsString.includes("rrrr")){
-      this.declareWinner("red");
-    }
-    if (currentDiagonalAsString.includes("bbbb")){
-      this.declareWinner("black");
+    if (this.state.checkStringForWinner(currentDiagonalAsString)){
+      this.declareWinner(this.state.getPlayerColor());
     }
   }
 
@@ -119,15 +116,12 @@ export class GameboardComponent implements OnInit {
       currentRow++;
       currentColumn++;
     }
-    if (currentDiagonalAsString.includes("rrrr")){
-      this.declareWinner("red");
-    }
-    if (currentDiagonalAsString.includes("bbbb")){
-      this.declareWinner("black");
+    if (this.state.checkStringForWinner(currentDiagonalAsString)){
+      this.declareWinner(this.state.getPlayerColor());
     }
   }
 
-  checkColumnForWinner(column: number) {
+  private checkColumnForWinner(column: number) {
     let columnCollection = "";
     for (let row: number = 6; row > 0; row--){
       columnCollection += this.grid[row][column - 1]
@@ -137,7 +131,7 @@ export class GameboardComponent implements OnInit {
     }
   }
 
-  private checkRowsForWinner(row: string) {
+  private checkRowForWinner(row: string) {
       if (this.state.checkStringForWinner(row)) {
           this.declareWinner(this.state.getPlayerColor());
       }
