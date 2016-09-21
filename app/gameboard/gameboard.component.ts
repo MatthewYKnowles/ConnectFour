@@ -6,18 +6,24 @@ import {Component, ViewChild, OnInit} from '@angular/core';
   styleUrls: ['app/gameboard/gameboard.component.css']
 })
 export class GameboardComponent implements OnInit {
+  private redsTurnState: State;
+  private blacksTurnState: State;
+  private gameOverState: State;
+  private state: State;
 
-  state: any;
   context: CanvasRenderingContext2D;
   playersTurn: string = "red";
   grid: any = {1: [".",".",".",".",".",".","."], 2: [".",".",".",".",".",".","."], 3: [".",".",".",".",".",".","."], 4: [".",".",".",".",".",".","."], 5: [".",".",".",".",".",".","."], 6: [".",".",".",".",".",".","."]};
-
   @ViewChild("myCanvas") myCanvas: any;
   private winningPlayer: string ="";
 
   ngOnInit(): void {
     this.context = this.myCanvas.nativeElement.getContext("2d");
     this.drawBoard();
+    this.redsTurnState = new RedsTurnState();
+    this.blacksTurnState = new BlacksTurnState();
+    this.gameOverState = new GameOverState();
+    this.state = this.redsTurnState;
   }
 
   drawPiece(column: number, row: number) {
@@ -50,6 +56,7 @@ export class GameboardComponent implements OnInit {
 
   private changeTurn(): void {
     this.playersTurn = this.playersTurn === "red" ? "black": "red";
+    this.state = this.state === this.redsTurnState ? this.blacksTurnState : this.redsTurnState;
   }
 
   private trackPieceInGrid(column: number, row: number) {
@@ -133,11 +140,12 @@ export class GameboardComponent implements OnInit {
   }
 
   private checkRowsForWinner(row: string) {
-    let redTurn: PlayersTurn = new RedsTurn();
-      if (redTurn.checkRowForWinner(row)) {
+    let redsTurn: PlayersTurn = new RedsTurnState();
+    let blacksTurn: PlayersTurn = new BlacksTurnState();
+      if (redsTurn.checkRowForWinner(row)) {
           this.declareWinner("red");
       }
-      if (row.includes("bbbb")) {
+      if (blacksTurn.checkRowForWinner(row)) {
           this.declareWinner("black");
       }
   }
@@ -157,20 +165,28 @@ export class GameboardComponent implements OnInit {
   }
 }
 
+interface State {
+
+}
+
+class GameOverState implements State {
+
+}
+
 abstract class PlayersTurn {
   playerColor: string;
   abstract checkRowForWinner(row: string): boolean;
 }
 
-class RedsTurn extends PlayersTurn {
+class RedsTurnState extends PlayersTurn implements State{
   playerColor: string = "red";
   checkRowForWinner(row: string): boolean {
     return row.includes("rrrr");
   }
 }
-class BlacksTurn extends PlayersTurn {
-  playerColor: string = "red";
+class BlacksTurnState extends PlayersTurn implements State{
+  playerColor: string = "black";
   checkRowForWinner(row: string): boolean {
-    return row.includes("rrrr");
+    return row.includes("bbbb");
   }
 }
