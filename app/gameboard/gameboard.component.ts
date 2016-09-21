@@ -9,9 +9,9 @@ export class GameboardComponent implements OnInit {
   private redsTurnState: State;
   private blacksTurnState: State;
   private gameOverState: State;
-  state: State;
+  private state: State;
+  private context: CanvasRenderingContext2D;
 
-  context: CanvasRenderingContext2D;
   playersTurn: string = "red";
   grid: any = {1: [".",".",".",".",".",".","."], 2: [".",".",".",".",".",".","."], 3: [".",".",".",".",".",".","."], 4: [".",".",".",".",".",".","."], 5: [".",".",".",".",".",".","."], 6: [".",".",".",".",".",".","."]};
   @ViewChild("myCanvas") myCanvas: any;
@@ -132,16 +132,13 @@ export class GameboardComponent implements OnInit {
     for (let row: number = 6; row > 0; row--){
       columnCollection += this.grid[row][column - 1]
     }
-    if (columnCollection.includes("rrrr")){
-      this.declareWinner("red");
-    }
-    if (columnCollection.includes("bbbb")){
-      this.declareWinner("black");
+    if (this.state.checkStringForWinner(columnCollection)){
+      this.declareWinner(this.state.getPlayerColor());
     }
   }
 
   private checkRowsForWinner(row: string) {
-      if (this.state.checkRowForWinner(row)) {
+      if (this.state.checkStringForWinner(row)) {
           this.declareWinner(this.state.getPlayerColor());
       }
   }
@@ -163,7 +160,7 @@ export class GameboardComponent implements OnInit {
 }
 
 export interface State {
-  checkRowForWinner(row: string): any;
+  checkStringForWinner(row: string): any;
   getPlayerColor(): string;
 
 }
@@ -172,7 +169,7 @@ class GameOverState implements State {
   getPlayerColor(): string {
     return null;
   }
-  checkRowForWinner(row: string): any {
+  checkStringForWinner(row: string): any {
     return null;
   }
 
@@ -181,7 +178,7 @@ class GameOverState implements State {
 abstract class PlayersTurn {
   protected playerColor: string;
   protected winningString: string;
-  checkRowForWinner(row: string): boolean {
+  checkStringForWinner(row: string): boolean {
     return row.includes(this.winningString);
   }
   getPlayerColor(): string {
@@ -197,4 +194,21 @@ export class RedsTurnState extends PlayersTurn implements State {
 export class BlacksTurnState extends PlayersTurn implements State {
   playerColor: string = "black";
   winningString: string = "bbbb";
+}
+
+class Grid {
+  grid: any;
+  constructor() {
+    this.grid = {
+      1: [".",".",".",".",".",".","."],
+      2: [".",".",".",".",".",".","."],
+      3: [".",".",".",".",".",".","."],
+      4: [".",".",".",".",".",".","."],
+      5: [".",".",".",".",".",".","."],
+      6: [".",".",".",".",".",".","."]
+    };
+  }
+  getGrid(): any {
+    return this.grid;
+  }
 }
