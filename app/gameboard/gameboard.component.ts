@@ -13,7 +13,6 @@ export class GameboardComponent implements OnInit {
   private state: State;
 
   private context: CanvasRenderingContext2D;
-  playersTurn: string = "red";
   @ViewChild("myCanvas") myCanvas: any;
   private winningPlayer: string ="";
 
@@ -59,17 +58,13 @@ export class GameboardComponent implements OnInit {
     this.grid.addPiece(column, row, this.state.getPlayerColor());
     this.drawPiece(column, row, this.state.getPlayerColor());
     let connectedStrings: string[] = this.grid.getConnectedStrings(row, column);
-    this.checkForWinner(connectedStrings);
+    this.winningPlayer = this.state.checkForWinner(connectedStrings);
+    ///html text stops game if winning player has text;
     this.changeTurn();
   }
 
   private changeTurn(): void {
-    this.playersTurn = this.playersTurn === "red" ? "black": "red";
     this.state = this.state === this.redsTurnState ? this.blacksTurnState : this.redsTurnState;
-  }
-
-  gameIsOver(): boolean {
-    return this.winningPlayer.length > 0;
   }
 
   startNewGame() {
@@ -78,24 +73,12 @@ export class GameboardComponent implements OnInit {
     this.winningPlayer = "";
     this.state = this.redsTurnState;
   }
-
-  declareWinner(playerColor: string) {
-    this.winningPlayer = playerColor;
-  }
-
-  private checkForWinner(connectedStrings: string[]) {
-    let winningStrings = connectedStrings.filter((connectedLine: string) => {return this.state.checkStringForWinner(connectedLine)}, this);
-
-    if (winningStrings.length > 0){
-      this.declareWinner(this.state.getPlayerColor());
-    }
-  }
 }
 
 export interface State {
   checkStringForWinner(row: string): any;
   getPlayerColor(): string;
-
+  checkForWinner(connectedStrings: string[]): null;
 }
 
 class GameOverState implements State {
@@ -105,7 +88,9 @@ class GameOverState implements State {
   checkStringForWinner(row: string): any {
     return null;
   }
-
+  checkForWinner(connectedStrings: string[]) {
+    return null;
+  }
 }
 
 abstract class PlayersTurn {
@@ -116,6 +101,14 @@ abstract class PlayersTurn {
   }
   getPlayerColor(): string {
     return this.playerColor;
+  }
+  checkForWinner(connectedStrings: string[]): string {
+    let returnString = "";
+    let winningStrings = connectedStrings.filter((connectedLine: string) => {return this.checkStringForWinner(connectedLine)}, this);
+    if (winningStrings.length > 0){
+      returnString += this.getPlayerColor();
+    }
+    return returnString
   }
 }
 
@@ -206,5 +199,15 @@ class Grid {
       currentColumn++;
     }
     return currentDiagonalAsString;
+  }
+}
+
+export class GameCoordinates {
+  private column;
+  private row;
+
+  constructor(column: number, row: number) {
+    this.column = column;
+    this.row = row;
   }
 }
