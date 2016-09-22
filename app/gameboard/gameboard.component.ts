@@ -6,6 +6,7 @@ import {Component, ViewChild, OnInit} from '@angular/core';
   styleUrls: ['app/gameboard/gameboard.component.css']
 })
 export class GameboardComponent implements OnInit {
+  private grid: Grid;
   private redsTurnState: State;
   private blacksTurnState: State;
   private gameOverState: State;
@@ -13,11 +14,11 @@ export class GameboardComponent implements OnInit {
   private context: CanvasRenderingContext2D;
 
   playersTurn: string = "red";
-  grid: any = {1: [".",".",".",".",".",".","."], 2: [".",".",".",".",".",".","."], 3: [".",".",".",".",".",".","."], 4: [".",".",".",".",".",".","."], 5: [".",".",".",".",".",".","."], 6: [".",".",".",".",".",".","."]};
   @ViewChild("myCanvas") myCanvas: any;
   private winningPlayer: string ="";
 
   constructor() {
+    this.grid = new Grid();
     this.redsTurnState = new RedsTurnState();
     this.blacksTurnState = new BlacksTurnState();
     this.gameOverState = new GameOverState();
@@ -44,26 +45,20 @@ export class GameboardComponent implements OnInit {
 
   dropInColumn(column: number) {
     let row = 6;
-    while(this.pieceAlreadyInSlot(row, column)) {
+    while(this.grid.pieceAlreadyInSlot(row, column)) {
       row--
     }
-    this.trackPieceInGrid(column, row);
+    this.grid.addPiece(column, row, this.state.getPlayerColor());
     this.drawPiece(column, row);
-    this.checkForWinner(row, column);
+    let connectedStrings: string[] = this.grid.getConnectedStrings(row, column);
+    console.log(connectedStrings);
+    this.checkForWinner(connectedStrings);
     this.changeTurn();
-  }
-
-  private pieceAlreadyInSlot(row: number, column: number) {
-    return this.grid[row][column - 1] !== ".";
   }
 
   private changeTurn(): void {
     this.playersTurn = this.playersTurn === "red" ? "black": "red";
     this.state = this.state === this.redsTurnState ? this.blacksTurnState : this.redsTurnState;
-  }
-
-  private trackPieceInGrid(column: number, row: number) {
-    this.grid[row][column - 1] = this.playersTurn[0];
   }
 
   private drawBoard(): void {
@@ -76,80 +71,30 @@ export class GameboardComponent implements OnInit {
     this.playersTurn = "red";
   }
 
-  private checkForWinner(row: number, column: number) {
-    this.checkRowForWinner(this.grid[row].join(""));
-    this.checkColumnForWinner(column);
-    this.checkUpRightDiagonalForWinner(row, column);
-    this.checkDownRightDiagonalForWinner(row, column);
-  }
-
-  checkUpRightDiagonalForWinner(row: number, column: number) {
-    let currentDiagonalAsString = "";
-    let currentRow = row;
-    let currentColumn = column;
-    while (currentRow < 6 && currentColumn > 1) {
-      currentRow ++;
-      currentColumn --;
-    }
-
-    while(currentRow >= 1 && currentColumn <= 7){
-      currentDiagonalAsString += this.grid[currentRow][currentColumn - 1];
-      currentRow--;
-      currentColumn++;
-    }
-    if (this.state.checkStringForWinner(currentDiagonalAsString)){
-      this.declareWinner(this.state.getPlayerColor());
-    }
-  }
-
-  checkDownRightDiagonalForWinner(row: number, column: number) {
-    let currentDiagonalAsString = "";
-    let currentRow = row;
-    let currentColumn = column;
-    while (currentRow > 1 && currentColumn > 1) {
-      currentRow --;
-      currentColumn --;
-    }
-
-    while(currentRow <= 6 && currentColumn <= 7){
-      currentDiagonalAsString += this.grid[currentRow][currentColumn - 1];
-      currentRow++;
-      currentColumn++;
-    }
-    if (this.state.checkStringForWinner(currentDiagonalAsString)){
-      this.declareWinner(this.state.getPlayerColor());
-    }
-  }
-
-  private checkColumnForWinner(column: number) {
-    let columnCollection = "";
-    for (let row: number = 6; row > 0; row--){
-      columnCollection += this.grid[row][column - 1]
-    }
-    if (this.state.checkStringForWinner(columnCollection)){
-      this.declareWinner(this.state.getPlayerColor());
-    }
-  }
-
-  private checkRowForWinner(row: string) {
-      if (this.state.checkStringForWinner(row)) {
-          this.declareWinner(this.state.getPlayerColor());
-      }
-  }
-
   gameIsOver(): boolean {
     return this.winningPlayer.length > 0;
   }
 
   startNewGame() {
     this.drawBoard();
-    this.grid = {1: [".",".",".",".",".",".","."], 2: [".",".",".",".",".",".","."], 3: [".",".",".",".",".",".","."], 4: [".",".",".",".",".",".","."], 5: [".",".",".",".",".",".","."], 6: [".",".",".",".",".",".","."]};
+    this.grid = new Grid();
     this.winningPlayer = "";
     this.state = this.redsTurnState;
   }
 
   declareWinner(playerColor: string) {
     this.winningPlayer = playerColor;
+  }
+
+  private checkForWinner(connectedStrings: Array) {
+    console.log(connectedStrings + " connected strings");
+    let winningStrings = connectedStrings.filter((connectedLine) => {
+      return this.state.checkStringForWinner(connectedLine)}, this
+    );
+
+    if (winningStrings.length > 0){
+      this.declareWinner(this.state.getPlayerColor());
+    }
   }
 }
 
@@ -204,5 +149,69 @@ class Grid {
   }
   getGrid(): any {
     return this.grid;
+  }
+
+  addPiece(column: number, row: number, playerColor: string) {
+    this.grid[row][column - 1] = playerColor[0];
+  }
+
+  pieceAlreadyInSlot(row: number, column: number) {
+    return this.grid[row][column - 1] !== ".";
+  }
+
+  getConnectedStrings(row: number, column: number) {
+    let connectedStringsArray = [];
+    connectedStringsArray.push(this.getRow(row));
+    connectedStringsArray.push(this.getColumn(column));
+    connectedStringsArray.push(this.getUpRightDiagonal(row, column));
+    connectedStringsArray.push(this.getDownRightDiagonal(row, column));
+    console.log(connectedStringsArray + " connected strings array");
+    return connectedStringsArray;
+  }
+
+  private getRow(row: number) {
+    return this.grid[row].join("");
+  }
+
+  private getColumn(column: number) {
+    let columnCollection = "";
+    for (let row: number = 6; row > 0; row--){
+      columnCollection += this.grid[row][column - 1]
+    }
+    return columnCollection;
+  }
+
+  private getUpRightDiagonal(row: number, column: number) {
+    let currentDiagonalAsString = "";
+    let currentRow = row;
+    let currentColumn = column;
+    while (currentRow < 6 && currentColumn > 1) {
+      currentRow ++;
+      currentColumn --;
+    }
+
+    while(currentRow >= 1 && currentColumn <= 7){
+      currentDiagonalAsString += this.grid[currentRow][currentColumn - 1];
+      currentRow--;
+      currentColumn++;
+    }
+    return currentDiagonalAsString;
+  }
+
+  private getDownRightDiagonal(row: number, column: number) {
+    let currentDiagonalAsString = "";
+    let currentRow = row;
+    let currentColumn = column;
+    while (currentRow > 1 && currentColumn > 1) {
+      currentRow --;
+      currentColumn --;
+    }
+
+    while(currentRow <= 6 && currentColumn <= 7){
+      currentDiagonalAsString += this.grid[currentRow][currentColumn - 1];
+      currentRow++;
+      currentColumn++;
+    }
+    return currentDiagonalAsString;
   }
 }
