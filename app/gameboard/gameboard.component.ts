@@ -51,7 +51,6 @@ export class GameboardComponent implements OnInit {
     this.grid.addPiece(column, row, this.state.getPlayerColor());
     this.drawPiece(column, row);
     let connectedStrings: string[] = this.grid.getConnectedStrings(row, column);
-    console.log(connectedStrings);
     this.checkForWinner(connectedStrings);
     this.changeTurn();
   }
@@ -87,10 +86,7 @@ export class GameboardComponent implements OnInit {
   }
 
   private checkForWinner(connectedStrings: Array) {
-    console.log(connectedStrings + " connected strings");
-    let winningStrings = connectedStrings.filter((connectedLine) => {
-      return this.state.checkStringForWinner(connectedLine)}, this
-    );
+    let winningStrings = connectedStrings.filter((connectedLine) => {return this.state.checkStringForWinner(connectedLine)}, this);
 
     if (winningStrings.length > 0){
       this.declareWinner(this.state.getPlayerColor());
@@ -117,8 +113,8 @@ class GameOverState implements State {
 abstract class PlayersTurn {
   protected playerColor: string;
   protected winningString: string;
-  checkStringForWinner(row: string): boolean {
-    return row.includes(this.winningString);
+  checkStringForWinner(connectedString: string): boolean {
+    return connectedString.includes(this.winningString);
   }
   getPlayerColor(): string {
     return this.playerColor;
@@ -165,7 +161,6 @@ class Grid {
     connectedStringsArray.push(this.getColumn(column));
     connectedStringsArray.push(this.getUpRightDiagonal(row, column));
     connectedStringsArray.push(this.getDownRightDiagonal(row, column));
-    console.log(connectedStringsArray + " connected strings array");
     return connectedStringsArray;
   }
 
