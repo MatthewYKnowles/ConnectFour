@@ -7,12 +7,13 @@ import {Component, ViewChild, OnInit} from '@angular/core';
 })
 export class GameboardComponent implements OnInit {
   private grid: Grid;
+  private graphics: Graphics;
   private redsTurnState: State;
   private blacksTurnState: State;
   private gameOverState: State;
   private state: State;
-  private context: CanvasRenderingContext2D;
 
+  private context: CanvasRenderingContext2D;
   playersTurn: string = "red";
   @ViewChild("myCanvas") myCanvas: any;
   private winningPlayer: string ="";
@@ -22,12 +23,14 @@ export class GameboardComponent implements OnInit {
     this.redsTurnState = new RedsTurnState();
     this.blacksTurnState = new BlacksTurnState();
     this.gameOverState = new GameOverState();
+    this.graphics = new Graphics();
     this.state = this.redsTurnState;
   }
 
   ngOnInit(): void {
-    this.context = this.myCanvas.nativeElement.getContext("2d");
-    this.drawBoard();
+    // this.context = this.myCanvas.nativeElement.getContext("2d");
+    this.graphics.setContext = this.myCanvas.nativeElement.getContext("2d");
+    this.graphics.drawBoard();
   }
 
   drawPiece(column: number, row: number) {
@@ -60,22 +63,12 @@ export class GameboardComponent implements OnInit {
     this.state = this.state === this.redsTurnState ? this.blacksTurnState : this.redsTurnState;
   }
 
-  private drawBoard(): void {
-    this.playersTurn = "white";
-    for (let row: number = 6; row >= 0; row--){
-        for (let column: number = 7; column > 0; column--){
-            this.drawPiece(column, row)
-        }
-    }
-    this.playersTurn = "red";
-  }
-
   gameIsOver(): boolean {
     return this.winningPlayer.length > 0;
   }
 
   startNewGame() {
-    this.drawBoard();
+    this.graphics.drawBoard();
     this.grid = new Grid();
     this.winningPlayer = "";
     this.state = this.redsTurnState;
@@ -85,14 +78,48 @@ export class GameboardComponent implements OnInit {
     this.winningPlayer = playerColor;
   }
 
-  private checkForWinner(connectedStrings: Array) {
-    let winningStrings = connectedStrings.filter((connectedLine) => {return this.state.checkStringForWinner(connectedLine)}, this);
+  private checkForWinner(connectedStrings: string[]) {
+    let winningStrings = connectedStrings.filter((connectedLine: string) => {return this.state.checkStringForWinner(connectedLine)}, this);
 
     if (winningStrings.length > 0){
       this.declareWinner(this.state.getPlayerColor());
     }
   }
 }
+
+
+export class Graphics {
+  context: CanvasRenderingContext2D;
+  @ViewChild("myCanvas") myCanvas: any;
+
+  setContext(context: CanvasRenderingContext2D): void {
+   this.context = context;
+  }
+
+  drawBoard(): void {
+    console.log(this.context);
+    for (let row: number = 6; row >= 0; row--){
+      for (let column: number = 7; column > 0; column--){
+        this.drawPiece(column, row, "white")
+      }
+    }
+  }
+
+  drawPiece(column: number, row: number, pieceColor: string) {
+    let ctx = this.context;
+    console.log(ctx);
+    let radius = 45;
+    let startAngle = 0;
+    let finishAngle = 2 * Math.PI;
+    let yAxisCenterPoint = (row) * 100 - 50;
+    let xAxisCenterPoint = column * 100 - 50;
+    ctx.beginPath();
+    ctx.arc(xAxisCenterPoint, yAxisCenterPoint, radius, startAngle, finishAngle);
+    ctx.fillStyle = pieceColor;
+    ctx.fill();
+  }
+}
+
 
 export interface State {
   checkStringForWinner(row: string): any;
@@ -156,7 +183,7 @@ class Grid {
   }
 
   getConnectedStrings(row: number, column: number) {
-    let connectedStringsArray = [];
+    let connectedStringsArray: string[] = [];
     connectedStringsArray.push(this.getRow(row));
     connectedStringsArray.push(this.getColumn(column));
     connectedStringsArray.push(this.getUpRightDiagonal(row, column));
