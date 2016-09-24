@@ -7,6 +7,7 @@ import {GameboardService} from "./gameboard.service";
   styleUrls: ['app/gameboard/gameboard.component.css']
 })
 export class GameboardComponent implements OnInit {
+  gameboardService: GameboardService;
   grid: Grid;
   redsTurnState: State;
   blacksTurnState: State;
@@ -16,7 +17,8 @@ export class GameboardComponent implements OnInit {
   @ViewChild("myCanvas") myCanvas: any;
   winningPlayer: string ="";
 
-  constructor(private gameboardService: GameboardService) {
+  constructor(gameboardService: GameboardService) {
+    this.gameboardService = gameboardService;
     this.grid = new Grid();
     this.redsTurnState = new RedsTurnState(this);
     this.blacksTurnState = new BlacksTurnState(this);
@@ -29,48 +31,29 @@ export class GameboardComponent implements OnInit {
     this.gameboardService.drawBoard();
   }
 
-  drawPiece(column: number, row: number, color: string) {
-    this.gameboardService.drawPiece(column, row, color);
-  }
-
-  changeTurn(): void {
-    this.state = this.state === this.redsTurnState ? this.blacksTurnState : this.redsTurnState;
-  }
-
-  startNewGame() {
-    this.gameboardService.drawBoard();
-    this.grid = new Grid();
-    this.winningPlayer = "";
-    this.state = this.redsTurnState;
-  }
-
   setState(newState: State) {
     this.state = newState;
   }
 }
 
 export interface State {
-  checkStringForWinner(row: string): any;
-  getPlayerColor(): string;
-  checkForWinner(connectedStrings: string[]): string;
   dropInColumn(column: number): any;
+  startNewGame(): void;
 }
 
 class GameOverState implements State {
-
   constructor(private gameboardComponent: GameboardComponent) {
 
   }
+
+  startNewGame() {
+    this.gameboardComponent.gameboardService.drawBoard();
+    this.gameboardComponent.grid = new Grid();
+    this.gameboardComponent.winningPlayer = "";
+    this.gameboardComponent.state = this.gameboardComponent.redsTurnState;
+  }
+
   dropInColumn(column: number): any {
-    return null;
-  }
-  getPlayerColor(): string {
-    return null;
-  }
-  checkStringForWinner(row: string): any {
-    return null;
-  }
-  checkForWinner(connectedStrings: string[]): string {
     return null;
   }
 }
@@ -86,29 +69,27 @@ abstract class PlayersTurn {
       row--
     }
     this.gameboardComponent.grid.addPiece(column, row, this.playerColor);
-    this.gameboardComponent.drawPiece(column, row, this.playerColor);
+    this.gameboardComponent.gameboardService.drawPiece(column, row, this.playerColor);
     let connectedStrings: string[] = this.gameboardComponent.grid.getConnectedStrings(row, column);
-    this.gameboardComponent.winningPlayer = this.checkForWinner(connectedStrings);
-    if (this.gameboardComponent.winningPlayer.length > 0) {this.gameboardComponent.state = this.gameboardComponent.gameOverState}
+    if (this.checkForWinner(connectedStrings).length > 0) {this.setGameOverState();}
     else {this.changeTurn()}
+  }
+
+  private setGameOverState() {
+    this.gameboardComponent.setState(this.gameboardComponent.gameOverState);
+    this.gameboardComponent.winningPlayer = this.playerColor;
   }
 
   checkStringForWinner(connectedString: string): boolean {
     return connectedString.includes(this.winningString);
   }
-  getPlayerColor(): string {
-    return this.playerColor;
-  }
-  checkForWinner(connectedStrings: string[]): string {
-    let returnString = "";
-    let winningStrings = connectedStrings.filter((connectedLine: string) => {return this.checkStringForWinner(connectedLine)}, this);
-    if (winningStrings.length > 0){
-      returnString += this.getPlayerColor();
-    }
-    return returnString
+  checkForWinner(connectedStrings: string[]): string[] {
+    return connectedStrings.filter((connectedLine: string) => {return this.checkStringForWinner(connectedLine)}, this);
   }
 
-  private changeTurn() {
+  abstract changeTurn(): void;
+
+  startNewGame(): void {
     return null;
   }
 }
@@ -122,10 +103,11 @@ export class RedsTurnState extends PlayersTurn implements State {
     this.gameboardComponent = gameboardComponent;
   }
 
-  changeTurn() {
+  changeTurn(): void {
     this.gameboardComponent.setState(this.gameboardComponent.blacksTurnState)
   }
 }
+
 export class BlacksTurnState extends PlayersTurn implements State {
   playerColor: string = "black";
   winningString: string = "bbbb";
@@ -135,7 +117,7 @@ export class BlacksTurnState extends PlayersTurn implements State {
     this.gameboardComponent = gameboardComponent;
   }
 
-  changeTurn() {
+  changeTurn(): void {
     this.gameboardComponent.setState(this.gameboardComponent.redsTurnState)
   }
 }
