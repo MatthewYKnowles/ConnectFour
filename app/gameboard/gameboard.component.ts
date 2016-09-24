@@ -33,19 +33,6 @@ export class GameboardComponent implements OnInit {
     this.gameboardService.drawPiece(column, row, color);
   }
 
-  dropInColumn(column: number) {
-    let row = 6;
-    while(this.grid.pieceAlreadyInSlot(row, column)) {
-      row--
-    }
-    this.grid.addPiece(column, row, this.state.getPlayerColor());
-    this.drawPiece(column, row, this.state.getPlayerColor());
-    let connectedStrings: string[] = this.grid.getConnectedStrings(row, column);
-    this.winningPlayer = this.state.checkForWinner(connectedStrings);
-    if (this.winningPlayer.length > 0) {this.state = this.gameOverState}
-    else {this.changeTurn();}
-  }
-
   private changeTurn(): void {
     this.state = this.state === this.redsTurnState ? this.blacksTurnState : this.redsTurnState;
   }
@@ -71,6 +58,7 @@ class GameOverState implements State {
 
   }
   dropInColumn(column: number) {
+    return null;
   }
   getPlayerColor(): string {
     return null;
@@ -86,9 +74,21 @@ class GameOverState implements State {
 abstract class PlayersTurn {
   protected playerColor: string;
   protected winningString: string;
+  private gameboardComponent;
 
   dropInColumn(column: number) {
+    let row = 6;
+    while(this.gameboardComponent.grid.pieceAlreadyInSlot(row, column)) {
+      row--
+    }
+    this.gameboardComponent.grid.addPiece(column, row, this.playerColor);
+    this.gameboardComponent.drawPiece(column, row, this.playerColor);
+    let connectedStrings: string[] = this.gameboardComponent.grid.getConnectedStrings(row, column);
+    this.gameboardComponent.winningPlayer = this.checkForWinner(connectedStrings);
+    if (this.gameboardComponent.winningPlayer.length > 0) {this.gameboardComponent.state = this.gameboardComponent.gameOverState}
+    else {this.gameboardComponent.changeTurn();}
   }
+
   checkStringForWinner(connectedString: string): boolean {
     return connectedString.includes(this.winningString);
   }
