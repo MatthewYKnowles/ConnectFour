@@ -18,9 +18,9 @@ export class GameboardComponent implements OnInit {
 
   constructor(private gameboardService: GameboardService) {
     this.grid = new Grid();
-    this.redsTurnState = new RedsTurnState();
-    this.blacksTurnState = new BlacksTurnState();
-    this.gameOverState = new GameOverState();
+    this.redsTurnState = new RedsTurnState(this);
+    this.blacksTurnState = new BlacksTurnState(this);
+    this.gameOverState = new GameOverState(this);
     this.state = this.redsTurnState;
   }
 
@@ -29,16 +29,20 @@ export class GameboardComponent implements OnInit {
     this.gameboardService.drawBoard();
   }
 
+  drawPiece(column: number, row: number, color: string) {
+    this.gameboardService.drawPiece(column, row, color);
+  }
+
   dropInColumn(column: number) {
     let row = 6;
     while(this.grid.pieceAlreadyInSlot(row, column)) {
       row--
     }
     this.grid.addPiece(column, row, this.state.getPlayerColor());
-    this.gameboardService.drawPiece(column, row, this.state.getPlayerColor());
+    this.drawPiece(column, row, this.state.getPlayerColor());
     let connectedStrings: string[] = this.grid.getConnectedStrings(row, column);
     this.winningPlayer = this.state.checkForWinner(connectedStrings);
-    if (this.gameIsOver()) {this.state = this.gameOverState}
+    if (this.winningPlayer.length > 0) {this.state = this.gameOverState}
     else {this.changeTurn();}
   }
 
@@ -52,23 +56,20 @@ export class GameboardComponent implements OnInit {
     this.winningPlayer = "";
     this.state = this.redsTurnState;
   }
-
-  declareWinner(winningPlayer: string) {
-  }
-
-  private gameIsOver() {
-    return this.winningPlayer.length > 0;
-  }
 }
 
 export interface State {
   checkStringForWinner(row: string): any;
   getPlayerColor(): string;
   checkForWinner(connectedStrings: string[]): string;
-  dropInColumn(column: number);
+  dropInColumn(column: number): any;
 }
 
 class GameOverState implements State {
+
+  constructor(private gameboardComponent: GameboardComponent) {
+
+  }
   dropInColumn(column: number) {
   }
   getPlayerColor(): string {
@@ -108,10 +109,20 @@ export class RedsTurnState extends PlayersTurn implements State {
   playerColor: string = "red";
   winningString: string = "rrrr";
 
+  constructor(private gameboardComponent: GameboardComponent) {
+    super();
+    this.gameboardComponent = gameboardComponent;
+  }
+
 }
 export class BlacksTurnState extends PlayersTurn implements State {
   playerColor: string = "black";
   winningString: string = "bbbb";
+
+  constructor(private gameboardComponent: GameboardComponent) {
+    super();
+    this.gameboardComponent = gameboardComponent;
+  }
 }
 
 export class Grid {

@@ -1,5 +1,5 @@
 <h2>Connect Four</h2>
-<h1 *ngIf="gameIsOver()"> {{winningPlayer}} wins!!</h1>
+<h1 *ngIf="state === gameOverState"> {{winningPlayer}} wins!!</h1>
 <br />
 <canvas #myCanvas width="700" height="600"></canvas>
 <div *ngIf="state !== gameOverState" id="buttons">
