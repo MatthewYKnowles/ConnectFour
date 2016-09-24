@@ -30,6 +30,18 @@ h1 {
   font-size: 150px;
 }
 
+h2 {
+  font-size: 50px;
+  margin: 10px;
+}
+
+h3 {
+  position: absolute;
+  width:97%;
+  font-size: 90px;
+  color: lightseagreen;
+}
+
 #newGame {
   width:100%;
 }

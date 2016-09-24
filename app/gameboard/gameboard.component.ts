@@ -13,6 +13,7 @@ export class GameboardComponent implements OnInit {
   blacksTurnState: State;
   gameOverState: State;
   state: State;
+  columnIsFull: boolean;
 
   @ViewChild("myCanvas") myCanvas: any;
   winningPlayer: string ="";
@@ -31,13 +32,18 @@ export class GameboardComponent implements OnInit {
     this.gameboardService.drawBoard();
   }
 
+  clickOnCanvas(event: MouseEvent) {
+    this.columnIsFull = false;
+    this.state.dropInColumn(event);
+  }
+
   setState(newState: State) {
     this.state = newState;
   }
 }
 
 export interface State {
-  dropInColumn(column: number): any;
+  dropInColumn(event: MouseEvent): any;
   startNewGame(): void;
 }
 
@@ -53,7 +59,7 @@ class GameOverState implements State {
     this.gameboardComponent.setState(this.gameboardComponent.redsTurnState);
   }
 
-  dropInColumn(column: number): any {
+  dropInColumn(event: MouseEvent): any {
     return null;
   }
 }
@@ -63,16 +69,19 @@ abstract class PlayersTurn {
   protected winningString: string;
   protected gameboardComponent: GameboardComponent;
 
-  dropInColumn(column: number) {
-    let row = 6;
-    while(this.gameboardComponent.grid.pieceAlreadyInSlot(row, column)) {
-      row--
+  dropInColumn(event: MouseEvent) {
+    let column = Math.floor(event.offsetX / 100) + 1;
+    let row = this.gameboardComponent.grid.calculateRow(column);
+    if (row > 0){
+      console.log(row);
+      this.gameboardComponent.grid.addPiece(column, row, this.playerColor);
+      this.gameboardComponent.gameboardService.drawPiece(column, row, this.playerColor);
+      let connectedStrings: string[] = this.gameboardComponent.grid.getConnectedStrings(row, column);
+      if (this.checkForWinner(connectedStrings).length > 0) {this.setGameOverState();}
+      else {this.changeTurn()}
     }
-    this.gameboardComponent.grid.addPiece(column, row, this.playerColor);
-    this.gameboardComponent.gameboardService.drawPiece(column, row, this.playerColor);
-    let connectedStrings: string[] = this.gameboardComponent.grid.getConnectedStrings(row, column);
-    if (this.checkForWinner(connectedStrings).length > 0) {this.setGameOverState();}
-    else {this.changeTurn()}
+    else {this.gameboardComponent.columnIsFull = true;}
+
   }
 
   private setGameOverState() {
@@ -163,6 +172,15 @@ export class Grid {
       columnCollection += this.grid[row][column - 1]
     }
     return columnCollection;
+  }
+
+
+  calculateRow(column: number) {
+    let row = 6;
+    while (row > 0 && this.pieceAlreadyInSlot(row, column)) {
+      row--
+    }
+    return row;
   }
 
   private getUpRightDiagonal(row: number, column: number) {
