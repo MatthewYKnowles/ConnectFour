@@ -50,7 +50,7 @@ class GameOverState implements State {
     this.gameboardComponent.gameboardService.drawBoard();
     this.gameboardComponent.grid = new Grid();
     this.gameboardComponent.winningPlayer = "";
-    this.gameboardComponent.state = this.gameboardComponent.redsTurnState;
+    this.gameboardComponent.setState(this.gameboardComponent.redsTurnState);
   }
 
   dropInColumn(column: number): any {
@@ -89,9 +89,7 @@ abstract class PlayersTurn {
 
   abstract changeTurn(): void;
 
-  startNewGame(): void {
-    return null;
-  }
+  startNewGame(): void {return null;}
 }
 
 export class RedsTurnState extends PlayersTurn implements State {
@@ -201,13 +199,3 @@ export class Grid {
     return currentDiagonalAsString;
   }
 }
-
-// export class GameCoordinates {
-//   private column;
-//   private row;
-//
-//   constructor(column: number, row: number) {
-//     this.column = column;
-//     this.row = row;
-//   }
-// }
