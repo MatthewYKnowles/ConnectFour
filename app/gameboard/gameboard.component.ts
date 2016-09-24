@@ -13,9 +13,9 @@ export class GameboardComponent implements OnInit {
   private gameOverState: State;
   private state: State;
 
-  private context: CanvasRenderingContext2D;
   @ViewChild("myCanvas") myCanvas: any;
   private winningPlayer: string ="";
+
   constructor(private gameboardService: GameboardService) {
     this.grid = new Grid();
     this.redsTurnState = new RedsTurnState();
@@ -25,20 +25,9 @@ export class GameboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.context = this.myCanvas.nativeElement.getContext("2d");
-    this.gameboardService.setContext(this.context);
-    console.log(this.gameboardService.getContext());
-    this.drawBoard();
+    this.gameboardService.setContext(this.myCanvas.nativeElement.getContext("2d"));
+    this.gameboardService.drawBoard();
   }
-
-  drawBoard(): void {
-    for (let row: number = 6; row >= 0; row--) {
-      for (let column: number = 7; column > 0; column--) {
-        this.gameboardService.drawPiece(column, row, "white")
-      }
-    }
-  }
-
 
   dropInColumn(column: number) {
     let row = 6;
@@ -49,12 +38,8 @@ export class GameboardComponent implements OnInit {
     this.gameboardService.drawPiece(column, row, this.state.getPlayerColor());
     let connectedStrings: string[] = this.grid.getConnectedStrings(row, column);
     this.winningPlayer = this.state.checkForWinner(connectedStrings);
-    if (this.gameIsOver()) {this.declareWinner(this.winningPlayer)}
-    this.changeTurn();
-  }
-
-  gameIsOver() {
-    return this.winningPlayer.length > 0;
+    if (this.gameIsOver()) {this.state = this.gameOverState}
+    else {this.changeTurn();}
   }
 
   private changeTurn(): void {
@@ -62,36 +47,30 @@ export class GameboardComponent implements OnInit {
   }
 
   startNewGame() {
-    this.drawBoard();
+    this.gameboardService.drawBoard();
     this.grid = new Grid();
     this.winningPlayer = "";
     this.state = this.redsTurnState;
   }
 
   declareWinner(winningPlayer: string) {
+  }
 
+  private gameIsOver() {
+    return this.winningPlayer.length > 0;
   }
 }
-
-// export class Graphics implements OnInit {
-//   private context: CanvasRenderingContext2D;
-//   @ViewChild("myCanvas") myCanvas: any;
-//
-//   ngOnInit(): void {
-//     this.context = this.myCanvas.nativeElement.getContext("2d");
-//   }
-//   getContext() {
-//     return this.context;
-//   }
-// }
 
 export interface State {
   checkStringForWinner(row: string): any;
   getPlayerColor(): string;
   checkForWinner(connectedStrings: string[]): string;
+  dropInColumn(column: number);
 }
 
 class GameOverState implements State {
+  dropInColumn(column: number) {
+  }
   getPlayerColor(): string {
     return null;
   }
@@ -99,13 +78,16 @@ class GameOverState implements State {
     return null;
   }
   checkForWinner(connectedStrings: string[]): string {
-    return "";
+    return null;
   }
 }
 
 abstract class PlayersTurn {
   protected playerColor: string;
   protected winningString: string;
+
+  dropInColumn(column: number) {
+  }
   checkStringForWinner(connectedString: string): boolean {
     return connectedString.includes(this.winningString);
   }
@@ -132,7 +114,7 @@ export class BlacksTurnState extends PlayersTurn implements State {
   winningString: string = "bbbb";
 }
 
-class Grid {
+export class Grid {
   grid: any;
   constructor() {
     this.grid = {
