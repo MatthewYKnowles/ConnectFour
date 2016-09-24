@@ -2,20 +2,20 @@ import {GameboardComponent } from "./gameboard.component";
 
 describe("gameboard", ()=> {
   it("should drop a piece in column 1 and have it go to the bottom", ()=> {
-    let gameboard: GameboardComponent = new GameboardComponent();
+    let gameboard: GameboardComponent = new GameboardComponent(null);
     spyOn(gameboard, 'drawPiece');
     gameboard.dropInColumn(1);
     expect(gameboard.drawPiece).toHaveBeenCalledWith(1, 6);
   });
   it("should drop a second piece in column 1 and draw it in row 5", ()=> {
-    let gameboard: GameboardComponent = new GameboardComponent();
+    let gameboard: GameboardComponent = new GameboardComponent(null);
     spyOn(gameboard, 'drawPiece');
     gameboard.dropInColumn(1);
     gameboard.dropInColumn(1);
     expect(gameboard.drawPiece).toHaveBeenCalledWith(1, 5);
   });
   it("should drop a third piece in column 1 and draw it in row 4", ()=> {
-    let gameboard: GameboardComponent = new GameboardComponent();
+    let gameboard: GameboardComponent = new GameboardComponent(null);
     spyOn(gameboard, 'drawPiece');
     gameboard.dropInColumn(1);
     gameboard.dropInColumn(1);
@@ -25,7 +25,7 @@ describe("gameboard", ()=> {
 });
 describe("winning conditions", ()=> {
   it("should declare red the winner with a bottom row connect 4", ()=> {
-    let gameboard: GameboardComponent = new GameboardComponent();
+    let gameboard: GameboardComponent = new GameboardComponent(null);
     spyOn(gameboard, 'drawPiece');
     spyOn(gameboard, 'declareWinner');
     gameboard.dropInColumn(1);
@@ -38,7 +38,7 @@ describe("winning conditions", ()=> {
     expect(gameboard.declareWinner).toHaveBeenCalledWith("red");
   });
   it("should declare red the winner with a second to bottom row connect 4", ()=> {
-    let gameboard: GameboardComponent = new GameboardComponent();
+    let gameboard: GameboardComponent = new GameboardComponent(null);
     spyOn(gameboard, 'drawPiece');
     spyOn(gameboard, 'declareWinner');
       gameboard.dropInColumn(1);
@@ -54,7 +54,7 @@ describe("winning conditions", ()=> {
     expect(gameboard.declareWinner).toHaveBeenCalledWith("black");
   });
   it("should declare red the winner a connect four in column 1", ()=> {
-    let gameboard: GameboardComponent = new GameboardComponent();
+    let gameboard: GameboardComponent = new GameboardComponent(null);
     spyOn(gameboard, 'drawPiece');
     spyOn(gameboard, 'declareWinner');
     gameboard.dropInColumn(1);
@@ -67,7 +67,7 @@ describe("winning conditions", ()=> {
     expect(gameboard.declareWinner).toHaveBeenCalledWith("red");
   });
   it("should declare black the winner with a connect four in column 1", ()=> {
-    let gameboard: GameboardComponent = new GameboardComponent();
+    let gameboard: GameboardComponent = new GameboardComponent(null);
     spyOn(gameboard, 'drawPiece');
     spyOn(gameboard, 'declareWinner');
     gameboard.dropInColumn(1);
@@ -81,7 +81,7 @@ describe("winning conditions", ()=> {
     expect(gameboard.declareWinner).toHaveBeenCalledWith("black");
   });
   it("should declare red the winner with a connect four in a up right diagonal", ()=> {
-    let gameboard: GameboardComponent = new GameboardComponent();
+    let gameboard: GameboardComponent = new GameboardComponent(null);
     spyOn(gameboard, 'drawPiece');
     spyOn(gameboard, 'declareWinner');
     gameboard.dropInColumn(1);
@@ -98,7 +98,7 @@ describe("winning conditions", ()=> {
     expect(gameboard.declareWinner).toHaveBeenCalledWith("red");
   });
   it("should declare black the winner with a connect four in a up right diagonal in the upper right corner", ()=> {
-    let gameboard: GameboardComponent = new GameboardComponent();
+    let gameboard: GameboardComponent = new GameboardComponent(null);
     spyOn(gameboard, 'drawPiece');
     spyOn(gameboard, 'declareWinner');
     gameboard.dropInColumn(7);
@@ -124,7 +124,7 @@ describe("winning conditions", ()=> {
     expect(gameboard.declareWinner).toHaveBeenCalledWith("black");
   });
   it("should declare black the winner with a connect four in a down right diagonal in the upper left corner", ()=> {
-    let gameboard: GameboardComponent = new GameboardComponent();
+    let gameboard: GameboardComponent = new GameboardComponent(null);
     spyOn(gameboard, 'drawPiece');
     spyOn(gameboard, 'declareWinner');
     gameboard.dropInColumn(1);
