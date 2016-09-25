@@ -2,6 +2,23 @@
   text-align: center;
 }
 
+.topItems {
+  width: 200px;
+  display: inline-block;
+  margin: 0;
+}
+
+#redPlayer {
+  background-color: red;
+  color: black;
+}
+
+#blackPlayer {
+  background-color: black;
+  color: red;
+}
+
+
 canvas {
   padding-left: 0;
   padding-right: 0;
@@ -28,11 +45,6 @@ h1 {
   position: absolute;
   width:97%;
   font-size: 150px;
-}
-
-h2 {
-  font-size: 50px;
-  margin: 10px;
 }
 
 h3 {

@@ -25,10 +25,17 @@ export class GameboardService {
   }
 
   drawBoard(): void {
+    this.drawBackground();
     for (let row: number = 6; row >= 0; row--) {
       for (let column: number = 7; column > 0; column--) {
         this.drawPiece(column, row, "white")
       }
     }
+  }
+
+  private drawBackground() {
+    let ctx = this.context;
+    ctx.fillStyle = "yellow";
+    ctx.fillRect(0, 0, 700, 600)
   }
 }

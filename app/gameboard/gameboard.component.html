@@ -1,7 +1,13 @@
-<div id="top">
-  <h4>Player 1</h4>
-  <h2>Connect Four</h2>
-  <h4>Player 2</h4>
+<div>
+  <div class="topItems" id="redPlayer">
+    <h4>Player 1</h4>
+  </div>
+  <div class ="topItems">
+    <h2>Connect Four</h2>
+  </div>
+  <div class="topItems" id="blackPlayer">
+    <h4>Player 2</h4>
+  </div>
 </div>
 <h1 *ngIf="state === gameOverState"> {{winningPlayer}} wins!!</h1>
 <h3 *ngIf="columnIsFull">Column is Full</h3>
