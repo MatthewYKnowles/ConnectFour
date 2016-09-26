@@ -1,18 +1,18 @@
 <div>
-  <div class="topItems" id="redPlayer" [style.width]="state.getDivWidth("black")">
+  <div class="topItems" id="redPlayer">
     <h4>Player 1</h4>
   </div>
   <div class ="topItems" id="title">
     <h2>Connect Four</h2>
   </div>
-  <div class="topItems" id="blackPlayer" [style.width]="state.getDivWidth("black")">
-    <h4>Player 2</h4>
+  <div class="topItems" id="blackPlayer">
+    <h4>{{playerTwo}}</h4>
   </div>
 </div>
 <h1 *ngIf="state === gameOverState"> {{winningPlayer}} wins!!</h1>
 <h3 *ngIf="columnIsFull">Column is Full</h3>
 <br />
-<canvas #myCanvas width="700" height="600" (click)="clickOnCanvas($event)"></canvas>
+<canvas #myCanvas width="700" height="600" (click)="clickOnCanvas($event)" [style.border]="state.border"></canvas>
 <div id="newGame">
   <button *ngIf="state === gameOverState" (click)="state.startNewGame()">Play Again?</button>
 </div>

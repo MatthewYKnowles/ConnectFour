@@ -17,6 +17,7 @@ export class GameboardComponent implements OnInit {
 
   @ViewChild("myCanvas") myCanvas: any;
   winningPlayer: string ="";
+  playerTwo: string ="Player 2";
 
   constructor(gameboardService: GameboardService) {
     this.gameboardService = gameboardService;
@@ -43,12 +44,14 @@ export class GameboardComponent implements OnInit {
 }
 
 export interface State {
+  border: string;
   dropInColumn(event: MouseEvent): any;
   startNewGame(): void;
   getDivWidth(id: string): string;
 }
 
 class GameOverState implements State {
+  border: string;
   constructor(private gameboardComponent: GameboardComponent) {
 
   }
@@ -72,6 +75,7 @@ abstract class PlayersTurn {
   protected playerColor: string;
   protected winningString: string;
   protected gameboardComponent: GameboardComponent;
+  border: string;
 
   dropInColumn(event: MouseEvent) {
     let column = Math.floor(event.offsetX / 100) + 1;
@@ -107,6 +111,7 @@ abstract class PlayersTurn {
 }
 
 export class RedsTurnState extends PlayersTurn implements State {
+  border: string = "10px solid red";
   playerColor: string = "red";
   winningString: string = "rrrr";
 
@@ -126,6 +131,7 @@ export class RedsTurnState extends PlayersTurn implements State {
 }
 
 export class BlacksTurnState extends PlayersTurn implements State {
+  border: string = "10px solid black";
   playerColor: string = "black";
   winningString: string = "bbbb";
   constructor(gameboardComponent: GameboardComponent) {
