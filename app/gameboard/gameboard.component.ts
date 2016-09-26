@@ -18,6 +18,7 @@ export class GameboardComponent implements OnInit {
   @ViewChild("myCanvas") myCanvas: any;
   winningPlayer: string ="";
   playerTwo: string ="Player 2";
+  isADraw: boolean = false;
 
   constructor(gameboardService: GameboardService) {
     this.gameboardService = gameboardService;
@@ -35,7 +36,7 @@ export class GameboardComponent implements OnInit {
 
   clickOnCanvas(event: MouseEvent) {
     this.columnIsFull = false;
-    this.state.dropInColumn(event);
+    this.state.tryToDropInColumn(event);
   }
 
   setState(newState: State) {
@@ -45,7 +46,7 @@ export class GameboardComponent implements OnInit {
 
 export interface State {
   border: string;
-  dropInColumn(event: MouseEvent): any;
+  tryToDropInColumn(event: MouseEvent): any;
   startNewGame(): void;
   getDivWidth(id: string): string;
 }
@@ -60,10 +61,11 @@ class GameOverState implements State {
     this.gameboardComponent.gameboardService.drawBoard();
     this.gameboardComponent.grid = new Grid();
     this.gameboardComponent.winningPlayer = "";
+    this.gameboardComponent.isADraw = false;
     this.gameboardComponent.setState(this.gameboardComponent.redsTurnState);
   }
 
-  dropInColumn(event: MouseEvent): any {
+  tryToDropInColumn(event: MouseEvent): any {
     return null;
   }
   getDivWidth(id: string): string {
@@ -77,7 +79,7 @@ abstract class PlayersTurn {
   protected gameboardComponent: GameboardComponent;
   border: string;
 
-  dropInColumn(event: MouseEvent) {
+  tryToDropInColumn(event: MouseEvent) {
     let column = Math.floor(event.offsetX / 100) + 1;
     let row = this.gameboardComponent.grid.calculateRow(column);
     if (row > 0){
@@ -86,6 +88,10 @@ abstract class PlayersTurn {
       this.gameboardComponent.gameboardService.drawPiece(column, row, this.playerColor);
       let connectedStrings: string[] = this.gameboardComponent.grid.getConnectedStrings(row, column);
       if (this.checkForWinner(connectedStrings).length > 0) {this.setGameOverState();}
+      else if(this.gameboardComponent.grid.checkForDraw()){
+        this.gameboardComponent.setState(this.gameboardComponent.gameOverState);
+        this.gameboardComponent.isADraw = true;
+      }
       else {this.changeTurn()}
     }
     else {this.gameboardComponent.columnIsFull = true;}
@@ -234,5 +240,9 @@ export class Grid {
       currentColumn++;
     }
     return currentDiagonalAsString;
+  }
+
+  checkForDraw() {
+    return !this.grid[1].includes(".")
   }
 }
