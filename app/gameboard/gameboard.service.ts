@@ -35,7 +35,7 @@ export class GameboardService {
 
   private drawBackground() {
     let ctx = this.context;
-    ctx.fillStyle = "yellow";
+    ctx.fillStyle = "#e6e600";
     ctx.fillRect(0, 0, 700, 600)
   }
 }

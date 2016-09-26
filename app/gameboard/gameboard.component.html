@@ -1,11 +1,11 @@
 <div>
-  <div class="topItems" id="redPlayer">
+  <div class="topItems" id="redPlayer" [style.width]="state.getDivWidth("black")">
     <h4>Player 1</h4>
   </div>
-  <div class ="topItems">
+  <div class ="topItems" id="title">
     <h2>Connect Four</h2>
   </div>
-  <div class="topItems" id="blackPlayer">
+  <div class="topItems" id="blackPlayer" [style.width]="state.getDivWidth("black")">
     <h4>Player 2</h4>
   </div>
 </div>

@@ -45,6 +45,7 @@ export class GameboardComponent implements OnInit {
 export interface State {
   dropInColumn(event: MouseEvent): any;
   startNewGame(): void;
+  getDivWidth(id: string): string;
 }
 
 class GameOverState implements State {
@@ -60,6 +61,9 @@ class GameOverState implements State {
   }
 
   dropInColumn(event: MouseEvent): any {
+    return null;
+  }
+  getDivWidth(id: string): string {
     return null;
   }
 }
@@ -97,6 +101,7 @@ abstract class PlayersTurn {
   }
 
   abstract changeTurn(): void;
+  abstract getDivWidth(id: string): string;
 
   startNewGame(): void {return null;}
 }
@@ -113,12 +118,16 @@ export class RedsTurnState extends PlayersTurn implements State {
   changeTurn(): void {
     this.gameboardComponent.setState(this.gameboardComponent.blacksTurnState)
   }
+
+  getDivWidth(id: string): string {
+    console.log(id);
+    return id === "redPlayer" ? "300px" : "100px";
+  }
 }
 
 export class BlacksTurnState extends PlayersTurn implements State {
   playerColor: string = "black";
   winningString: string = "bbbb";
-
   constructor(gameboardComponent: GameboardComponent) {
     super();
     this.gameboardComponent = gameboardComponent;
@@ -126,6 +135,10 @@ export class BlacksTurnState extends PlayersTurn implements State {
 
   changeTurn(): void {
     this.gameboardComponent.setState(this.gameboardComponent.redsTurnState)
+  }
+
+  getDivWidth(id: string): string {
+    return id === "blackPlayer" ? "300px" : "100px";
   }
 }
 
