@@ -1,12 +1,30 @@
-// import {GameboardComponent, Grid} from "./gameboard.component";
-//
-// // xdescribe("gameboard", ()=> {
-// //   it("should drop a piece in column 1 and have it go to the bottom", ()=> {
-// //     let grid: Grid = new Grid();
-// //     spyOn(grid, 'drawPiece');
-// //     grid.tryToDropInColumn(1);
-// //     expect(grid.drawPiece).toHaveBeenCalledWith(1, 6);
-// //   });
+import {GameboardComponent, Grid, RedsTurnState} from "./gameboard.component";
+import {GameboardService} from "./gameboard.service";
+
+describe("gameboard", ()=> {
+  let gameboardService: GameboardService;
+  let gameboardComponent: GameboardComponent;
+  let redPlayerTurn: RedsTurnState;
+  beforeEach(()=> {
+    gameboardService = new GameboardService();
+    gameboardComponent = new GameboardComponent(gameboardService);
+    redPlayerTurn = new RedsTurnState(gameboardComponent);
+  });
+  it("should drop a piece in column 1 and have it go to the bottom", ()=> {
+    spyOn(redPlayerTurn, 'dropInColumn');
+    let event: MouseEvent = <MouseEvent>{};
+    event.offsetX = 0;
+    redPlayerTurn.tryToDropInColumn(event);
+    expect(redPlayerTurn.dropInColumn).toHaveBeenCalledWith(6, 1);
+  });
+  it("should drop two pieces in column 1 and have it go to the bottom two slots", ()=> {
+    spyOn(redPlayerTurn, 'dropInColumn');
+    let event: MouseEvent = <MouseEvent>{};
+    event.offsetX = 0;
+    redPlayerTurn.tryToDropInColumn(event);
+    redPlayerTurn.tryToDropInColumn(event);
+    expect(redPlayerTurn.dropInColumn).toHaveBeenCalledWith(5, 1);
+  });
 // //   it("should drop a second piece in column 1 and draw it in row 5", ()=> {
 // //     let gameboard: GameboardComponent = new GameboardComponent(null);
 // //     spyOn(gameboard, 'drawPiece');
@@ -22,7 +40,7 @@
 // //     gameboard.tryToDropInColumn(1);
 // //     expect(gameboard.drawPiece).toHaveBeenCalledWith(1, 4);
 // //   });
-// // });
+});
 // describe("winning conditions", ()=> {
 //   it("should declare red the winner with a bottom row connect 4", ()=> {
 //     let gameboard: GameboardComponent = new GameboardComponent(null);

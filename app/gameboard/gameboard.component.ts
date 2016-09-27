@@ -48,7 +48,6 @@ export interface State {
   border: string;
   tryToDropInColumn(event: MouseEvent): any;
   startNewGame(): void;
-  getDivWidth(id: string): string;
 }
 
 class GameOverState implements State {
@@ -68,9 +67,6 @@ class GameOverState implements State {
   tryToDropInColumn(event: MouseEvent): any {
     return null;
   }
-  getDivWidth(id: string): string {
-    return null;
-  }
 }
 
 abstract class PlayersTurn {
@@ -82,20 +78,25 @@ abstract class PlayersTurn {
   tryToDropInColumn(event: MouseEvent) {
     let column = Math.floor(event.offsetX / 100) + 1;
     let row = this.gameboardComponent.grid.calculateRow(column);
-    if (row > 0){
-      console.log(row);
-      this.gameboardComponent.grid.addPiece(column, row, this.playerColor);
-      this.gameboardComponent.gameboardService.drawPiece(column, row, this.playerColor);
-      let connectedStrings: string[] = this.gameboardComponent.grid.getConnectedStrings(row, column);
-      if (this.checkForWinner(connectedStrings).length > 0) {this.setGameOverState();}
-      else if(this.gameboardComponent.grid.checkForDraw()){
-        this.gameboardComponent.setState(this.gameboardComponent.gameOverState);
-        this.gameboardComponent.isADraw = true;
-      }
-      else {this.changeTurn()}
-    }
-    else {this.gameboardComponent.columnIsFull = true;}
+    row > 0 ? this.dropInColumn(row, column) : this.gameboardComponent.columnIsFull = true;
 
+  }
+
+  dropInColumn(row: number, column: number) {
+    console.log(row);
+    this.gameboardComponent.grid.addPiece(column, row, this.playerColor);
+    this.gameboardComponent.gameboardService.drawPiece(column, row, this.playerColor);
+    let connectedStrings: string[] = this.gameboardComponent.grid.getConnectedStrings(row, column);
+    if (this.checkForWinner(connectedStrings).length > 0) {
+      this.setGameOverState();
+    }
+    else if (this.gameboardComponent.grid.checkForDraw()) {
+      this.gameboardComponent.setState(this.gameboardComponent.gameOverState);
+      this.gameboardComponent.isADraw = true;
+    }
+    else {
+      this.changeTurn()
+    }
   }
 
   private setGameOverState() {
@@ -111,13 +112,12 @@ abstract class PlayersTurn {
   }
 
   abstract changeTurn(): void;
-  abstract getDivWidth(id: string): string;
 
   startNewGame(): void {return null;}
 }
 
 export class RedsTurnState extends PlayersTurn implements State {
-  border: string = "10px solid red";
+  border: string = "15px solid red";
   playerColor: string = "red";
   winningString: string = "rrrr";
 
@@ -129,15 +129,10 @@ export class RedsTurnState extends PlayersTurn implements State {
   changeTurn(): void {
     this.gameboardComponent.setState(this.gameboardComponent.blacksTurnState)
   }
-
-  getDivWidth(id: string): string {
-    console.log(id);
-    return id === "redPlayer" ? "300px" : "100px";
-  }
 }
 
 export class BlacksTurnState extends PlayersTurn implements State {
-  border: string = "10px solid black";
+  border: string = "15px solid black";
   playerColor: string = "black";
   winningString: string = "bbbb";
   constructor(gameboardComponent: GameboardComponent) {
@@ -147,10 +142,6 @@ export class BlacksTurnState extends PlayersTurn implements State {
 
   changeTurn(): void {
     this.gameboardComponent.setState(this.gameboardComponent.redsTurnState)
-  }
-
-  getDivWidth(id: string): string {
-    return id === "blackPlayer" ? "300px" : "100px";
   }
 }
 
