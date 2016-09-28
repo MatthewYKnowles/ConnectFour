@@ -10,37 +10,51 @@ describe("gameboard", ()=> {
     gameboardComponent = new GameboardComponent(gameboardService);
     redPlayerTurn = new RedsTurnState(gameboardComponent);
   });
-  it("should drop a piece in column 1 and have it go to the bottom", ()=> {
+  it("should click in column 1 and have it drop in column 1", ()=> {
     spyOn(redPlayerTurn, 'dropInColumn');
-    let event: MouseEvent = <MouseEvent>{};
-    event.offsetX = 0;
+    let event: MouseEvent = <MouseEvent>{
+      offsetX: 0
+    };
     redPlayerTurn.tryToDropInColumn(event);
     expect(redPlayerTurn.dropInColumn).toHaveBeenCalledWith(6, 1);
   });
-  it("should drop two pieces in column 1 and have it go to the bottom two slots", ()=> {
+  it("should drop in column 2 and have a piece dropped in column 2", ()=> {
     spyOn(redPlayerTurn, 'dropInColumn');
-    let event: MouseEvent = <MouseEvent>{};
-    event.offsetX = 0;
+    let event: MouseEvent = <MouseEvent>{
+      offsetX: 100
+    };
     redPlayerTurn.tryToDropInColumn(event);
-    redPlayerTurn.tryToDropInColumn(event);
-    expect(redPlayerTurn.dropInColumn).toHaveBeenCalledWith(5, 1);
+    expect(redPlayerTurn.dropInColumn).toHaveBeenCalledWith(6, 2);
   });
-// //   it("should drop a second piece in column 1 and draw it in row 5", ()=> {
-// //     let gameboard: GameboardComponent = new GameboardComponent(null);
-// //     spyOn(gameboard, 'drawPiece');
-// //     gameboard.tryToDropInColumn(1);
-// //     gameboard.tryToDropInColumn(1);
-// //     expect(gameboard.drawPiece).toHaveBeenCalledWith(1, 5);
-// //   });
-// //   it("should drop a third piece in column 1 and draw it in row 4", ()=> {
-// //     let gameboard: GameboardComponent = new GameboardComponent(null);
-// //     spyOn(gameboard, 'drawPiece');
-// //     gameboard.tryToDropInColumn(1);
-// //     gameboard.tryToDropInColumn(1);
-// //     gameboard.tryToDropInColumn(1);
-// //     expect(gameboard.drawPiece).toHaveBeenCalledWith(1, 4);
-// //   });
 });
+
+describe("Grid", ()=> {
+  let grid: Grid;
+  beforeEach(()=> {
+    grid = new Grid();
+  });
+  it("should return row 6 by default", ()=> {
+    expect(grid.calculateRow(1)).toEqual(6);
+  });
+  it("should return row 5 after a piece has already been dropped", ()=> {
+    grid.addPiece(1, 6, "red");
+    expect(grid.calculateRow(1)).toEqual(5);
+  });
+  it("should return row 0 when the column is full", ()=> {
+    grid.addPiece(1, 6, "red");
+    grid.addPiece(1, 5, "black");
+    grid.addPiece(1, 4, "red");
+    grid.addPiece(1, 3, "black");
+    grid.addPiece(1, 2, "red");
+    grid.addPiece(1, 1, "black");
+    expect(grid.calculateRow(1)).toEqual(0);
+  });
+  it("should return draw when the top of every column is full", ()=> {
+    grid.grid[1] = ["b","r","b","r","b","r","b"];
+    expect(grid.checkForDraw()).toBeTruthy();
+  });
+});
+
 // describe("winning conditions", ()=> {
 //   it("should declare red the winner with a bottom row connect 4", ()=> {
 //     let gameboard: GameboardComponent = new GameboardComponent(null);
