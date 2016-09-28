@@ -102,6 +102,7 @@ abstract class PlayersTurn {
   private setGameOverState() {
     this.gameboardComponent.setState(this.gameboardComponent.gameOverState);
     this.gameboardComponent.winningPlayer = this.playerColor;
+    this.gameboardComponent.state.border = this.border;
   }
 
   checkStringForWinner(connectedString: string): boolean {
