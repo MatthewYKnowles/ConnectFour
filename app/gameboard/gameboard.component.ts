@@ -8,7 +8,6 @@ import {GameboardService} from "./gameboard.service";
 })
 export class GameboardComponent implements OnInit {
   gameboardService: GameboardService;
-  grid: Grid;
   redsTurnState: State;
   blacksTurnState: State;
   gameOverState: State;
@@ -22,10 +21,10 @@ export class GameboardComponent implements OnInit {
 
   constructor(gameboardService: GameboardService) {
     this.gameboardService = gameboardService;
-    this.grid = new Grid();
-    this.redsTurnState = new RedsTurnState(this);
-    this.blacksTurnState = new BlacksTurnState(this);
-    this.gameOverState = new GameOverState(this);
+    let grid = new Grid();
+    this.redsTurnState = new RedsTurnState(this, grid);
+    this.blacksTurnState = new BlacksTurnState(this, grid);
+    this.gameOverState = new GameOverState(this, grid);
     this.state = this.redsTurnState;
   }
 
@@ -52,13 +51,12 @@ export interface State {
 
 class GameOverState implements State {
   border: string;
-  constructor(private gameboardComponent: GameboardComponent) {
-
+  constructor(private gameboardComponent: GameboardComponent, private grid: Grid) {
   }
 
   startNewGame() {
     this.gameboardComponent.gameboardService.drawBoard();
-    this.gameboardComponent.grid = new Grid();
+    this.grid.resetGrid();
     this.gameboardComponent.winningPlayer = "";
     this.gameboardComponent.isADraw = false;
     this.gameboardComponent.setState(this.gameboardComponent.redsTurnState);
@@ -73,24 +71,25 @@ abstract class PlayersTurn {
   protected playerColor: string;
   protected winningString: string;
   protected gameboardComponent: GameboardComponent;
+  protected grid: Grid;
   border: string;
 
   tryToDropInColumn(event: MouseEvent) {
     let column = Math.floor(event.offsetX / 100) + 1;
-    let row = this.gameboardComponent.grid.calculateRow(column);
+    let row = this.grid.calculateRow(column);
     row > 0 ? this.dropInColumn(row, column) : this.gameboardComponent.columnIsFull = true;
 
   }
 
   dropInColumn(row: number, column: number) {
     console.log(row);
-    this.gameboardComponent.grid.addPiece(column, row, this.playerColor);
+    this.grid.addPiece(column, row, this.playerColor);
     this.gameboardComponent.gameboardService.drawPiece(column, row, this.playerColor);
-    let connectedStrings: string[] = this.gameboardComponent.grid.getConnectedStrings(row, column);
+    let connectedStrings: string[] = this.grid.getConnectedStrings(row, column);
     if (this.checkForWinner(connectedStrings).length > 0) {
       this.setGameOverState();
     }
-    else if (this.gameboardComponent.grid.checkForDraw()) {
+    else if (this.grid.checkForDraw()) {
       this.gameboardComponent.setState(this.gameboardComponent.gameOverState);
       this.gameboardComponent.isADraw = true;
     }
@@ -122,9 +121,10 @@ export class RedsTurnState extends PlayersTurn implements State {
   playerColor: string = "red";
   winningString: string = "rrrr";
 
-  constructor(gameboardComponent: GameboardComponent) {
+  constructor(gameboardComponent: GameboardComponent, grid: Grid) {
     super();
     this.gameboardComponent = gameboardComponent;
+    this.grid = grid;
   }
 
   changeTurn(): void {
@@ -136,9 +136,11 @@ export class BlacksTurnState extends PlayersTurn implements State {
   border: string = "15px solid black";
   playerColor: string = "black";
   winningString: string = "bbbb";
-  constructor(gameboardComponent: GameboardComponent) {
+
+  constructor(gameboardComponent: GameboardComponent, grid: Grid) {
     super();
     this.gameboardComponent = gameboardComponent;
+    this.grid = grid;
   }
 
   changeTurn(): void {
@@ -149,6 +151,13 @@ export class BlacksTurnState extends PlayersTurn implements State {
 export class Grid {
   grid: any;
   constructor() {
+    this.resetGrid();
+  }
+  getGrid(): any {
+    return this.grid;
+  }
+
+  resetGrid(): void {
     this.grid = {
       1: [".",".",".",".",".",".","."],
       2: [".",".",".",".",".",".","."],
@@ -157,9 +166,6 @@ export class Grid {
       5: [".",".",".",".",".",".","."],
       6: [".",".",".",".",".",".","."]
     };
-  }
-  getGrid(): any {
-    return this.grid;
   }
 
   addPiece(column: number, row: number, playerColor: string) {

@@ -4,11 +4,13 @@ import {GameboardService} from "./gameboard.service";
 describe("gameboard", ()=> {
   let gameboardService: GameboardService;
   let gameboardComponent: GameboardComponent;
+  let grid: Grid;
   let redPlayerTurn: RedsTurnState;
   beforeEach(()=> {
     gameboardService = new GameboardService();
     gameboardComponent = new GameboardComponent(gameboardService);
-    redPlayerTurn = new RedsTurnState(gameboardComponent);
+    grid = new Grid();
+    redPlayerTurn = new RedsTurnState(gameboardComponent, grid);
   });
   it("should click in column 1 and have it drop in column 1", ()=> {
     spyOn(redPlayerTurn, 'dropInColumn');
