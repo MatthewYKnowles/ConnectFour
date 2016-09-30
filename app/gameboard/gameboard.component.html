@@ -9,8 +9,8 @@
     <h4>{{playerTwo}}</h4>
   </div>
 </div>
-<h1 *ngIf="state === gameOverState && isADraw === false"> {{state.winningPlayer}} wins!!</h1>
-<h1 *ngIf="isADraw">Draw</h1>
+<h1 *ngIf="state === gameOverState && state.isADraw === false"> {{state.winningPlayer}} wins!!</h1>
+<h1 *ngIf="state.isADraw">Draw</h1>
 <h3 *ngIf="columnIsFull">Column is Full</h3>
 <br />
 <canvas #myCanvas width="700" height="600" (click)="clickOnCanvas($event)" [style.border]="state.border"></canvas>

@@ -16,7 +16,6 @@ export class GameboardComponent implements OnInit {
 
   @ViewChild("myCanvas") myCanvas: any;
   playerTwo: string ="Player 2";
-  isADraw: boolean = false;
 
   constructor(gameboardRenderService: GameboardRenderService) {
     this.gameboardRenderService = gameboardRenderService;
@@ -45,11 +44,13 @@ export class GameboardComponent implements OnInit {
 export interface State {
   border: string;
   winningPlayer: string;
+  isADraw: boolean;
   tryToDropInColumn(event: MouseEvent): any;
   startNewGame(): void;
 }
 
 class GameOverState implements State {
+  isADraw: boolean = false;
   winningPlayer: string ="";
   border: string;
   constructor(private gameboardComponent: GameboardComponent, private grid: Grid, private gameboardRenderService: GameboardRenderService) {
@@ -59,7 +60,7 @@ class GameOverState implements State {
     this.gameboardComponent.gameboardRenderService.drawBoard();
     this.grid.resetGrid();
     this.winningPlayer = "";
-    this.gameboardComponent.isADraw = false;
+    this.isADraw = false;
     this.gameboardComponent.setState(this.gameboardComponent.redsTurnState);
   }
 
@@ -74,6 +75,7 @@ abstract class PlayersTurn {
   protected gameboardComponent: GameboardComponent;
   protected gameboardRenderService: GameboardRenderService;
   protected grid: Grid;
+  isADraw: boolean = false;
   winningPlayer: string ="";
   border: string;
 
@@ -93,7 +95,7 @@ abstract class PlayersTurn {
     }
     else if (this.grid.checkForDraw()) {
       this.gameboardComponent.setState(this.gameboardComponent.gameOverState);
-      this.gameboardComponent.isADraw = true;
+      this.gameboardComponent.state.isADraw = true;
     }
     else {
       this.changeTurn()
