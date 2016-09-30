@@ -12,10 +12,7 @@ export class GameboardComponent implements OnInit {
   blacksTurnState: State;
   gameOverState: State;
   state: State;
-  columnIsFull: boolean;
-
   @ViewChild("myCanvas") myCanvas: any;
-  playerTwo: string ="Player 2";
 
   constructor(gameboardRenderService: GameboardRenderService) {
     this.gameboardRenderService = gameboardRenderService;
@@ -31,11 +28,6 @@ export class GameboardComponent implements OnInit {
     this.gameboardRenderService.drawBoard();
   }
 
-  clickOnCanvas(event: MouseEvent) {
-    this.columnIsFull = false;
-    this.state.tryToDropInColumn(event);
-  }
-
   setState(newState: State) {
     this.state = newState;
   }
@@ -45,11 +37,14 @@ export interface State {
   border: string;
   winningPlayer: string;
   isADraw: boolean;
+  columnIsFull: boolean;
   tryToDropInColumn(event: MouseEvent): any;
   startNewGame(): void;
+  clickOnCanvas(event: MouseEvent): void;
 }
 
 class GameOverState implements State {
+  columnIsFull: boolean;
   isADraw: boolean = false;
   winningPlayer: string ="";
   border: string;
@@ -57,7 +52,7 @@ class GameOverState implements State {
   }
 
   startNewGame() {
-    this.gameboardComponent.gameboardRenderService.drawBoard();
+    this.gameboardRenderService.drawBoard();
     this.grid.resetGrid();
     this.winningPlayer = "";
     this.isADraw = false;
@@ -67,6 +62,8 @@ class GameOverState implements State {
   tryToDropInColumn(event: MouseEvent): any {
     return null;
   }
+
+  clickOnCanvas(event: MouseEvent): void {}
 }
 
 abstract class PlayersTurn {
@@ -75,15 +72,20 @@ abstract class PlayersTurn {
   protected gameboardComponent: GameboardComponent;
   protected gameboardRenderService: GameboardRenderService;
   protected grid: Grid;
+  columnIsFull: boolean;
   isADraw: boolean = false;
   winningPlayer: string ="";
   border: string;
 
+  clickOnCanvas(event: MouseEvent) {
+    this.columnIsFull = false;
+    this.tryToDropInColumn(event);
+  }
+
   tryToDropInColumn(event: MouseEvent) {
     let column = Math.floor(event.offsetX / 100) + 1;
     let row = this.grid.calculateRow(column);
-    row > 0 ? this.dropInColumn(row, column) : this.gameboardComponent.columnIsFull = true;
-
+    row > 0 ? this.dropInColumn(row, column) : this.columnIsFull = true;
   }
 
   dropInColumn(row: number, column: number) {
@@ -117,7 +119,7 @@ abstract class PlayersTurn {
 
   abstract changeTurn(): void;
 
-  startNewGame(): void {return null;}
+  startNewGame(): void {}
 }
 
 export class RedsTurnState extends PlayersTurn implements State {

@@ -6,14 +6,14 @@
     <h2>Connect Four</h2>
   </div>
   <div class="topItems" id="blackPlayer">
-    <h4>{{playerTwo}}</h4>
+    <h4>player 2</h4>
   </div>
 </div>
 <h1 *ngIf="state === gameOverState && state.isADraw === false"> {{state.winningPlayer}} wins!!</h1>
 <h1 *ngIf="state.isADraw">Draw</h1>
-<h3 *ngIf="columnIsFull">Column is Full</h3>
+<h3 *ngIf="state.columnIsFull">Column is Full</h3>
 <br />
-<canvas #myCanvas width="700" height="600" (click)="clickOnCanvas($event)" [style.border]="state.border"></canvas>
+<canvas #myCanvas width="700" height="600" (click)="state.clickOnCanvas($event)" [style.border]="state.border"></canvas>
 <div id="newGame">
   <button *ngIf="state === gameOverState" (click)="state.startNewGame()">Play Again?</button>
 </div>
