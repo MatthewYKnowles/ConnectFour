@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 
 @Injectable()
-export class GameboardService {
+export class GameboardRenderService {
   private context: CanvasRenderingContext2D;
 
   setContext(canvasContext: CanvasRenderingContext2D) {

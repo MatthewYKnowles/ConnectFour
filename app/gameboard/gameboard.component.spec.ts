@@ -1,13 +1,13 @@
 import {GameboardComponent, Grid, RedsTurnState} from "./gameboard.component";
-import {GameboardService} from "./gameboard.service";
+import {GameboardRenderService} from "./gameboard.render.service";
 
 describe("gameboard", ()=> {
-  let gameboardService: GameboardService;
+  let gameboardService: GameboardRenderService;
   let gameboardComponent: GameboardComponent;
   let grid: Grid;
   let redPlayerTurn: RedsTurnState;
   beforeEach(()=> {
-    gameboardService = new GameboardService();
+    gameboardService = new GameboardRenderService();
     gameboardComponent = new GameboardComponent(gameboardService);
     grid = new Grid();
     redPlayerTurn = new RedsTurnState(gameboardComponent, grid);

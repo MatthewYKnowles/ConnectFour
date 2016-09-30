@@ -1,5 +1,5 @@
 import {Component, ViewChild, OnInit} from '@angular/core';
-import {GameboardService} from "./gameboard.service";
+import {GameboardRenderService} from "./gameboard.render.service";
 
 @Component({
   selector: 'gameboard',
@@ -7,7 +7,7 @@ import {GameboardService} from "./gameboard.service";
   styleUrls: ['app/gameboard/gameboard.component.css']
 })
 export class GameboardComponent implements OnInit {
-  gameboardService: GameboardService;
+  gameboardRenderService: GameboardRenderService;
   redsTurnState: State;
   blacksTurnState: State;
   gameOverState: State;
@@ -15,22 +15,21 @@ export class GameboardComponent implements OnInit {
   columnIsFull: boolean;
 
   @ViewChild("myCanvas") myCanvas: any;
-  winningPlayer: string ="";
   playerTwo: string ="Player 2";
   isADraw: boolean = false;
 
-  constructor(gameboardService: GameboardService) {
-    this.gameboardService = gameboardService;
+  constructor(gameboardRenderService: GameboardRenderService) {
+    this.gameboardRenderService = gameboardRenderService;
     let grid = new Grid();
-    this.redsTurnState = new RedsTurnState(this, grid);
-    this.blacksTurnState = new BlacksTurnState(this, grid);
-    this.gameOverState = new GameOverState(this, grid);
+    this.redsTurnState = new RedsTurnState(this, grid, this.gameboardRenderService);
+    this.blacksTurnState = new BlacksTurnState(this, grid, this.gameboardRenderService);
+    this.gameOverState = new GameOverState(this, grid, this.gameboardRenderService);
     this.state = this.redsTurnState;
   }
 
   ngOnInit(): void {
-    this.gameboardService.setContext(this.myCanvas.nativeElement.getContext("2d"));
-    this.gameboardService.drawBoard();
+    this.gameboardRenderService.setContext(this.myCanvas.nativeElement.getContext("2d"));
+    this.gameboardRenderService.drawBoard();
   }
 
   clickOnCanvas(event: MouseEvent) {
@@ -45,19 +44,21 @@ export class GameboardComponent implements OnInit {
 
 export interface State {
   border: string;
+  winningPlayer: string;
   tryToDropInColumn(event: MouseEvent): any;
   startNewGame(): void;
 }
 
 class GameOverState implements State {
+  winningPlayer: string ="";
   border: string;
-  constructor(private gameboardComponent: GameboardComponent, private grid: Grid) {
+  constructor(private gameboardComponent: GameboardComponent, private grid: Grid, private gameboardRenderService: GameboardRenderService) {
   }
 
   startNewGame() {
-    this.gameboardComponent.gameboardService.drawBoard();
+    this.gameboardComponent.gameboardRenderService.drawBoard();
     this.grid.resetGrid();
-    this.gameboardComponent.winningPlayer = "";
+    this.winningPlayer = "";
     this.gameboardComponent.isADraw = false;
     this.gameboardComponent.setState(this.gameboardComponent.redsTurnState);
   }
@@ -71,7 +72,9 @@ abstract class PlayersTurn {
   protected playerColor: string;
   protected winningString: string;
   protected gameboardComponent: GameboardComponent;
+  protected gameboardRenderService: GameboardRenderService;
   protected grid: Grid;
+  winningPlayer: string ="";
   border: string;
 
   tryToDropInColumn(event: MouseEvent) {
@@ -82,9 +85,8 @@ abstract class PlayersTurn {
   }
 
   dropInColumn(row: number, column: number) {
-    console.log(row);
     this.grid.addPiece(column, row, this.playerColor);
-    this.gameboardComponent.gameboardService.drawPiece(column, row, this.playerColor);
+    this.gameboardRenderService.drawPiece(column, row, this.playerColor);
     let connectedStrings: string[] = this.grid.getConnectedStrings(row, column);
     if (this.checkForWinner(connectedStrings).length > 0) {
       this.setGameOverState();
@@ -100,7 +102,7 @@ abstract class PlayersTurn {
 
   private setGameOverState() {
     this.gameboardComponent.setState(this.gameboardComponent.gameOverState);
-    this.gameboardComponent.winningPlayer = this.playerColor;
+    this.gameboardComponent.state.winningPlayer = this.playerColor;
     this.gameboardComponent.state.border = this.border;
   }
 
@@ -121,10 +123,11 @@ export class RedsTurnState extends PlayersTurn implements State {
   playerColor: string = "red";
   winningString: string = "rrrr";
 
-  constructor(gameboardComponent: GameboardComponent, grid: Grid) {
+  constructor(gameboardComponent: GameboardComponent, grid: Grid, gameboardRenderService: GameboardRenderService) {
     super();
     this.gameboardComponent = gameboardComponent;
     this.grid = grid;
+    this.gameboardRenderService = gameboardRenderService;
   }
 
   changeTurn(): void {
@@ -137,10 +140,11 @@ export class BlacksTurnState extends PlayersTurn implements State {
   playerColor: string = "black";
   winningString: string = "bbbb";
 
-  constructor(gameboardComponent: GameboardComponent, grid: Grid) {
+  constructor(gameboardComponent: GameboardComponent, grid: Grid, gameboardRenderService: GameboardRenderService) {
     super();
     this.gameboardComponent = gameboardComponent;
     this.grid = grid;
+    this.gameboardRenderService = gameboardRenderService;
   }
 
   changeTurn(): void {

@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent }  from './app.component';
 import {GameboardComponent} from "./gameboard/gameboard.component";
-import {GameboardService} from "./gameboard/gameboard.service";
+import {GameboardRenderService} from "./gameboard/gameboard.render.service";
 
 @NgModule({
   imports: [ BrowserModule ],
@@ -12,6 +12,6 @@ import {GameboardService} from "./gameboard/gameboard.service";
       GameboardComponent
   ],
   bootstrap: [ AppComponent ],
-  providers: [ GameboardService ]
+  providers: [ GameboardRenderService ]
 })
 export class AppModule { }
