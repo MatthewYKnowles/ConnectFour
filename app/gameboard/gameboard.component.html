@@ -15,5 +15,5 @@
 <br />
 <canvas #myCanvas width="700" height="600" (click)="state.clickOnCanvas($event)" [style.border]="state.border"></canvas>
 <div id="newGame">
-  <button *ngIf="state === gameOverState" (click)="state.startNewGame()">Play Again?</button>
+  <button (click)="state.startNewGame()">{{state.newGameText}}</button>
 </div>

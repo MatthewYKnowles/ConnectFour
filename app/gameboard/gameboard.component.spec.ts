@@ -2,15 +2,15 @@ import {GameboardComponent, Grid, RedsTurnState} from "./gameboard.component";
 import {GameboardRenderService} from "./gameboard.render.service";
 
 describe("gameboard", ()=> {
-  let gameboardService: GameboardRenderService;
+  let gameboardRenderService: GameboardRenderService;
   let gameboardComponent: GameboardComponent;
   let grid: Grid;
   let redPlayerTurn: RedsTurnState;
   beforeEach(()=> {
-    gameboardService = new GameboardRenderService();
-    gameboardComponent = new GameboardComponent(gameboardService);
+    gameboardRenderService = new GameboardRenderService();
+    gameboardComponent = new GameboardComponent(gameboardRenderService);
     grid = new Grid();
-    redPlayerTurn = new RedsTurnState(gameboardComponent, grid);
+    redPlayerTurn = new RedsTurnState(gameboardComponent, grid, gameboardRenderService);
   });
   it("should click in column 1 and have it drop in column 1", ()=> {
     spyOn(redPlayerTurn, 'dropInColumn');

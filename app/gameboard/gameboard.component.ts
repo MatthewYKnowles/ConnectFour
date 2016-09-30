@@ -38,12 +38,14 @@ export interface State {
   winningPlayer: string;
   isADraw: boolean;
   columnIsFull: boolean;
+  newGameText: string;
   tryToDropInColumn(event: MouseEvent): any;
   startNewGame(): void;
   clickOnCanvas(event: MouseEvent): void;
 }
 
 class GameOverState implements State {
+  newGameText: string = "New Game";
   columnIsFull: boolean;
   isADraw: boolean = false;
   winningPlayer: string ="";
@@ -72,6 +74,7 @@ abstract class PlayersTurn {
   protected gameboardComponent: GameboardComponent;
   protected gameboardRenderService: GameboardRenderService;
   protected grid: Grid;
+  newGameText: string = "Restart Game";
   columnIsFull: boolean;
   isADraw: boolean = false;
   winningPlayer: string ="";
@@ -103,6 +106,13 @@ abstract class PlayersTurn {
       this.changeTurn()
     }
   }
+  startNewGame() {
+    this.gameboardRenderService.drawBoard();
+    this.grid.resetGrid();
+    this.winningPlayer = "";
+    this.isADraw = false;
+    this.gameboardComponent.setState(this.gameboardComponent.redsTurnState);
+  }
 
   private setGameOverState() {
     this.gameboardComponent.setState(this.gameboardComponent.gameOverState);
@@ -118,8 +128,6 @@ abstract class PlayersTurn {
   }
 
   abstract changeTurn(): void;
-
-  startNewGame(): void {}
 }
 
 export class RedsTurnState extends PlayersTurn implements State {
