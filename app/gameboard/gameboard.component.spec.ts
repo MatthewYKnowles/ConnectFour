@@ -55,6 +55,10 @@ describe("Grid", ()=> {
     grid.grid[1] = ["b","r","b","r","b","r","b"];
     expect(grid.checkForDraw()).toBeTruthy();
   });
+  it("should not return a draw when there are still empty slots", ()=> {
+    grid.grid[1] = ["b","r","b",".","b","r","."];
+    expect(grid.checkForDraw()).toBeFalsy();
+  });
 });
 
 // describe("winning conditions", ()=> {

@@ -94,15 +94,16 @@ abstract class PlayersTurn {
   dropInColumn(row: number, column: number) {
     this.grid.addPiece(column, row, this.playerColor);
     this.gameboardRenderService.drawPiece(column, row, this.playerColor);
+    this.changeState(row, column);
+  }
+
+  private changeState(row: number, column: number) {
     let connectedStrings: string[] = this.grid.getConnectedStrings(row, column);
-    if (this.checkForWinner(connectedStrings).length > 0) {
+    if (this.checkForWinner(connectedStrings).length > 0 || this.grid.checkForDraw()) {
       this.setGameOverState();
     }
-    else if (this.grid.checkForDraw()) {
-      this.gameboardComponent.setState(this.gameboardComponent.gameOverState);
-      this.gameboardComponent.state.isADraw = true;
-    }
     else {
+      this.columnIsFull = false;
       this.changeTurn()
     }
   }
@@ -111,6 +112,7 @@ abstract class PlayersTurn {
     this.grid.resetGrid();
     this.winningPlayer = "";
     this.isADraw = false;
+    this.columnIsFull = false;
     this.gameboardComponent.setState(this.gameboardComponent.redsTurnState);
   }
 
@@ -118,6 +120,7 @@ abstract class PlayersTurn {
     this.gameboardComponent.setState(this.gameboardComponent.gameOverState);
     this.gameboardComponent.state.winningPlayer = this.playerColor;
     this.gameboardComponent.state.border = this.border;
+    if(this.grid.checkForDraw()){this.gameboardComponent.state.isADraw = true;}
   }
 
   checkStringForWinner(connectedString: string): boolean {
