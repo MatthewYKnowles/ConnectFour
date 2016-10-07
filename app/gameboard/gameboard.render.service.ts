@@ -8,9 +8,6 @@ export class GameboardRenderService {
     this.context = canvasContext;
   }
 
-  getContext() {
-    return this.context;
-  }
   drawPiece(column: number, row: number, color: string) {
     let ctx = this.context;
     let radius = 45;

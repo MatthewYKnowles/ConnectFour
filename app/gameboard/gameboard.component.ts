@@ -39,7 +39,6 @@ export interface State {
   isADraw: boolean;
   columnIsFull: boolean;
   newGameText: string;
-  tryToDropInColumn(event: MouseEvent): any;
   startNewGame(): void;
   clickOnCanvas(event: MouseEvent): void;
 }
@@ -61,14 +60,10 @@ class GameOverState implements State {
     this.gameboardComponent.setState(this.gameboardComponent.redsTurnState);
   }
 
-  tryToDropInColumn(event: MouseEvent): any {
-    return null;
-  }
-
   clickOnCanvas(event: MouseEvent): void {}
 }
 
-abstract class PlayersTurn {
+abstract class PlayersTurn implements State {
   protected playerColor: string;
   protected winningString: string;
   protected gameboardComponent: GameboardComponent;
@@ -99,14 +94,18 @@ abstract class PlayersTurn {
 
   private changeState(row: number, column: number) {
     let connectedStrings: string[] = this.grid.getConnectedStrings(row, column);
-    if (this.checkForWinner(connectedStrings).length > 0 || this.grid.checkForDraw()) {
+    if (this.gameIsOver(connectedStrings)) {
       this.setGameOverState();
     }
     else {
-      this.columnIsFull = false;
-      this.changeTurn()
+      this.changeTurn();
     }
   }
+
+  private gameIsOver(connectedStrings: string[]) {
+    return this.checkForWinner(connectedStrings).length > 0 || this.grid.checkForDraw();
+  }
+
   startNewGame() {
     this.gameboardRenderService.drawBoard();
     this.grid.resetGrid();
@@ -133,7 +132,7 @@ abstract class PlayersTurn {
   abstract changeTurn(): void;
 }
 
-export class RedsTurnState extends PlayersTurn implements State {
+export class RedsTurnState extends PlayersTurn {
   border: string = "15px solid red";
   playerColor: string = "red";
   winningString: string = "rrrr";
@@ -146,11 +145,12 @@ export class RedsTurnState extends PlayersTurn implements State {
   }
 
   changeTurn(): void {
+    this.columnIsFull = false;
     this.gameboardComponent.setState(this.gameboardComponent.blacksTurnState)
   }
 }
 
-export class BlacksTurnState extends PlayersTurn implements State {
+export class BlacksTurnState extends PlayersTurn {
   border: string = "15px solid black";
   playerColor: string = "black";
   winningString: string = "bbbb";
@@ -163,6 +163,7 @@ export class BlacksTurnState extends PlayersTurn implements State {
   }
 
   changeTurn(): void {
+    this.columnIsFull = false;
     this.gameboardComponent.setState(this.gameboardComponent.redsTurnState)
   }
 }
@@ -188,7 +189,11 @@ export class Grid {
   }
 
   addPiece(column: number, row: number, playerColor: string) {
-    this.grid[row][column - 1] = playerColor[0];
+    this.grid[row][column - 1] = this.playerSymbol(playerColor);
+  }
+
+  private playerSymbol(playerColor: string) {
+    return playerColor[0];
   }
 
   pieceAlreadyInSlot(row: number, column: number) {
