@@ -2,9 +2,10 @@ import {Component, ViewChild, OnInit} from '@angular/core';
 import {GameboardRenderService} from "./gameboard.render.service";
 
 @Component({
-  selector: 'gameboard',
-  templateUrl: 'app/gameboard/gameboard.component.html',
-  styleUrls: ['app/gameboard/gameboard.component.css']
+  selector: 'app-gameboard',
+  templateUrl: 'gameboard.component.html',
+  styleUrls: ['gameboard.component.css'],
+  providers: [GameboardRenderService]
 })
 export class GameboardComponent implements OnInit {
   gameboardRenderService: GameboardRenderService;
